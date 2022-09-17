@@ -15,7 +15,7 @@ fetch('../WORDS2.json')
 // })
 
 const data = shallowRef<string[]>()
-const userInput = ref('datae-')
+const userInput = ref('data')
 const inputClean = computed(() =>
   userInput.value
     .replaceAll('*', '')
@@ -31,77 +31,58 @@ const results = computed(() => {
   const inputCleanV = inputClean.value
   const dataV = data.value!
 
+  const result: any = {}
+
   // 顺序
-  if (userInputV.includes('!')) {
-    // stroke
-    // stoker
-    return [
-      dataV
-        .filter((e) => e.length === inputCleanV.length)
-        .filter((e) => [...e].sort().join() === [...inputCleanV].sort().join()),
-    ]
-  }
+  // stroke
+  // stoker
+  const sx = dataV
+    .filter((e) => e.length === inputCleanV.length)
+    .filter((e) => [...e].sort().join() === [...inputCleanV].sort().join())
 
   // 不同一个
-  if (userInputV.includes('?')) {
-    return [
-      dataV.filter((word) => {
-        let n = 0
-        for (let i = 0; i < inputCleanV.length; i++) {
-          if (inputCleanV[i] !== word[i]) n++
-        }
-        return n === 1 && word.length === inputCleanV.length
-      }),
-    ]
-  }
+  const bt = dataV.filter((word) => {
+    let n = 0
+    for (let i = 0; i < inputCleanV.length; i++) {
+      if (inputCleanV[i] !== word[i]) n++
+    }
+    return n === 1 && word.length === inputCleanV.length
+  })
 
   const alphabets = Array.from(Array(26), (_, i) => String.fromCharCode(97 + i))
 
   // 多一个
-  if (userInputV.includes('+')) {
-    return [
-      Array(inputCleanV.length + 1)
-        .fill(0)
-        .flatMap((_, i) => {
-          return alphabets.map((alphabet) => {
-            const res = [...inputCleanV]
-            res.splice(i, 0, alphabet)
-            return res.join('')
-          })
-        })
-        .filter((e) => dataV.includes(e)),
-    ]
-  }
+  const dy = Array(inputCleanV.length + 1)
+    .fill(0)
+    .flatMap((_, i) => {
+      return alphabets.map((alphabet) => {
+        const res = [...inputCleanV]
+        res.splice(i, 0, alphabet)
+        return res.join('')
+      })
+    })
+    .filter((e) => dataV.includes(e))
 
   // 少一个
-  if (userInputV.includes('-')) {
-    return [
-      Array.from({ length: inputCleanV.length }, (_, i) => {
-        const tmp = [...inputCleanV]
-        tmp.splice(i, 1)
-        return tmp.join('')
-      }).filter((e) => dataV.includes(e)),
-    ]
-  }
-  // 拆分
-  if (userInputV.includes('=')) {
-    return [
-      Array.from({ length: inputCleanV.length }, (_, i) => {
-        const tmp = [...inputCleanV]
-        tmp.splice(i, 1)
-        return tmp.join('')
-      }).filter((e) => dataV.includes(e)),
-    ]
-  }
+  const sy = Array.from({ length: inputCleanV.length }, (_, i) => {
+    const tmp = [...inputCleanV]
+    tmp.splice(i, 1)
+    return tmp.join('')
+  }).filter((e) => dataV.includes(e))
 
-  if (userInputV.includes('.')) {
-    return {
-      arr: dataV.filter((e) => e.length === userInputV.length),
-    }
-  }
+  // 拆分
+  const cf = Array.from({ length: inputCleanV.length }, (_, i) => {
+    const tmp = [...inputCleanV]
+    tmp.splice(i, 1)
+    return tmp.join('')
+  }).filter((e) => dataV.includes(e))
+
+  const lens = dataV.filter((e) => e.length === userInputV.length)
 
   return Object.entries({
     self: [[inputCleanV]],
+    dy,
+    sy,
     start: doColor(
       dataV
         .filter((e) => e.startsWith(inputCleanV))
@@ -125,7 +106,7 @@ const results = computed(() => {
       all[k] = v
     }
     return all
-  }, {})
+  }, {}).ll
 
   function doColor(words: string[]) {
     return words.map((e) =>
@@ -144,12 +125,16 @@ const results = computed(() => {
 
     <group v-for="group in results">
       <word v-for="word in group.slice(0, 30)">
-        <part
-          v-for="part in word"
-          :class="{ 'text-red-300': part === inputClean }"
-        >
-          {{ part }}
-        </part>
+        <template v-if="Array.isArray(word)">
+          <part
+            v-for="part in word"
+            :class="{ 'text-red-300': part === inputClean }"
+          >
+            {{ part }}
+          </part>
+        </template>
+
+        <template v-else> {{ word }}</template>
       </word>
     </group>
   </template>
