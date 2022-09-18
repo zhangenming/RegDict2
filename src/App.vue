@@ -7,7 +7,10 @@ fetch('./WORDS.json')
   .then(res => res.json())
   .then(res => {
     data.value = res
+    window.temp1 = Object.keys(res).ll
   })
+//   const data = Object.keys(temp1).filter(e=>e.length===4)
+// const t = data.map(e=>e.slice(1)).map(e=>data.filter(ee=>ee.endsWith(e))).sort((q,w)=>w.length-q.length).ll
 // import data from './WORDS.json' assert { type: 'json' }
 // const { default: jsonObject } = await import('./WORDS.json', {
 //   assert: {
@@ -16,7 +19,7 @@ fetch('./WORDS.json')
 // })
 // const data = shallowRef<{ word: string; def: string }[]>()
 const data = shallowRef<any>({})
-const userInput = ref('with')
+const userInput = ref('will') // with
 const inputClean = computed(() =>
   userInput.value
     .replaceAll('*', '')
@@ -29,12 +32,12 @@ const inputClean = computed(() =>
 )
 const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
-  console.time('computed')
   const userInputV = userInput.value
   const inputCleanV = inputClean.value
   const dataV = _dataV.value
 
   if (!userInputV) return []
+  console.time('computed')
 
   const dataWithLen = dataV.filter(e => e.length === inputCleanV.length)
   const dataWithLen1 = dataV.filter(e => e.length === inputCleanV.length + 1)
@@ -73,12 +76,12 @@ const results = computed(() => {
   })
 
   const alphabets = Array.from(Array(26), (_, i) => String.fromCharCode(97 + i))
-  const 多 = Array(inputCleanV.length + 1)
+  const 多 = Array(inputCleanV.length - 1)
     .fill(0)
     .flatMap((_, i) => {
       return alphabets.flatMap(alphabet => {
-        const l = inputCleanV.slice(0, i)
-        const r = inputCleanV.slice(i)
+        const l = inputCleanV.slice(0, i + 1)
+        const r = inputCleanV.slice(i + 1)
         return dataWithLen1.includes(l + alphabet + r)
           ? [
               [
@@ -170,9 +173,9 @@ function getChinese(word: any) {
 <template>
   <input v-model="userInput" />
 
-  <span v-if="resultsLen">总共: {{ resultsLen }}</span>
+  <span>总共: {{ resultsLen }}</span>
 
-  <template v-if="data && userInput.length" v-for="(group, type) in results">
+  <template v-for="(group, type) in results">
     <group v-if="group.length">
       <span>{{ type }} -- {{ group.length }}</span>
       <word
@@ -180,18 +183,20 @@ function getChinese(word: any) {
           .slice(0, 100)
           .map(e => (Array.isArray(e) ? e : [e]))"
       >
-        <left v-for="part in word">
-          <part
-            v-if="typeof part === 'string'"
-            :class="{ 'text-red-500': part === inputClean }"
-          >
-            {{ part }}
-          </part>
-          <part v-else :class="{ 'text-red-500': part.color }">
-            {{ part.word }}
-          </part>
+        <left>
+          <template v-for="part in word">
+            <part
+              v-if="typeof part === 'string'"
+              :class="{ 'text-red-500': part === inputClean }"
+            >
+              {{ part }}
+            </part>
+            <part v-else :class="{ 'text-red-500': part.color }">
+              {{ part.word }}
+            </part>
+          </template>
         </left>
-        <mid></mid>
+        <!-- <mid></mid> -->
         <right>{{ getChinese(word) }}</right>
       </word>
     </group>
@@ -202,10 +207,16 @@ function getChinese(word: any) {
 body {
   margin: 0;
 }
+#app {
+  width: fit-content;
+}
 input {
   width: -webkit-fill-available;
   box-sizing: border-box;
   margin: 0.75rem;
+  background: aquamarine;
+  padding: 10px;
+  font-size: 50px;
 }
 div > span {
   margin-left: 0.75rem;
@@ -225,18 +236,21 @@ word {
   display: flex;
   align-items: center;
   height: 2em;
-  overflow: hidden;
   padding: 0 10px;
-}
-mid {
-  flex: 1;
-  min-width: 30px;
 }
 group word:nth-of-type(even) {
   background-color: #ddd;
 }
 group word:hover {
   background-color: #6ab7e7;
+}
+left {
+  width: 200px;
+  flex-shrink: 0;
+}
+mid {
+  flex: 1;
+  min-width: 30px;
 }
 right {
   white-space: nowrap;
