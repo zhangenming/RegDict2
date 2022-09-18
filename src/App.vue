@@ -2,10 +2,10 @@
 import { computed, ref, shallowRef } from 'vue'
 import { withTime } from './debug'
 console.clear()
-fetch('../WORDS2.json')
+fetch('../WORDS.json')
   .then(res => res.json())
   .then(res => {
-    data.value = res.data.ll
+    data.value = res
   })
 
 // import data from './WORDS.json' assert { type: 'json' }
@@ -14,8 +14,9 @@ fetch('../WORDS2.json')
 //     type: 'json',
 //   },
 // })
-const data = shallowRef<{ word: string; definition: string }[]>()
-const userInput = ref('here')
+// const data = shallowRef<{ word: string; def: string }[]>()
+const data = shallowRef<any>({})
+const userInput = ref('')
 const inputClean = computed(() =>
   userInput.value
     .replaceAll('*', '')
@@ -26,10 +27,14 @@ const inputClean = computed(() =>
     .replaceAll('-', '')
     .replaceAll('=', '')
 )
+const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
+  console.time('computed')
   const userInputV = userInput.value
   const inputCleanV = inputClean.value
-  const dataV = data.value!.map(e => e.word)
+  const dataV = _dataV.value
+
+  if (!userInputV) return []
 
   const dataWithLen = dataV.filter(e => e.length === inputCleanV.length)
   const dataWithLen1 = dataV.filter(e => e.length === inputCleanV.length + 1)
@@ -108,7 +113,7 @@ const results = computed(() => {
 
   const lens = dataV.filter(e => e.length === userInputV.length)
 
-  return {
+  const R = {
     start: doColor(
       dataV
         .filter(e => e.startsWith(inputCleanV))
@@ -130,6 +135,8 @@ const results = computed(() => {
     多,
     少,
   }
+  console.timeEnd('computed')
+  return R
 
   function doColor(words: string[]) {
     return words.map(e =>
@@ -140,9 +147,12 @@ const results = computed(() => {
     )
   }
 })
+const resultsLen = computed(() => {
+  return Object.values(results.value).reduce((all, now) => all + now.length, 0)
+})
 
-function getChinese(word: []) {
-  const china = word.reduce((all, now: any) => {
+function getChinese(word: any) {
+  const china = word.reduce((all: string, now: any) => {
     if (typeof now === 'string') {
       all += now
     } else {
@@ -151,42 +161,40 @@ function getChinese(word: []) {
     return all
   }, '')
 
-  return data.value
-    ?.find(e => e.word === china)
-    ?.definition.replace(/\\u[\dA-Fa-f]{4}/g, function (match) {
-      return String.fromCharCode(parseInt(match.replace(/\\u/, ''), 16))
-    })
+  return data.value[china].replace(/\\u[\dA-Fa-f]{4}/g, function (match: any) {
+    return String.fromCharCode(parseInt(match.replace(/\\u/, ''), 16))
+  })
 }
 </script>
 
 <template>
-  <template v-if="data">
-    <input v-model="userInput" />
+  <input v-model="userInput" />
 
-    <template v-for="(group, type) in results">
-      <group v-if="group.length">
-        <span>{{ type }}</span>
-        <word
-          v-for="word in group
-            .slice(0, 30)
-            .map(e => (Array.isArray(e) ? e : [e])).ll"
-        >
-          <left v-for="part in word">
-            <part
-              v-if="typeof part === 'string'"
-              :class="{ 'text-red-500': part === inputClean }"
-            >
-              {{ part }}
-            </part>
-            <part v-else :class="{ 'text-red-500': part.color }">
-              {{ part.word }}
-            </part>
-          </left>
-          <mid></mid>
-          <right>{{ getChinese(word) }}</right>
-        </word>
-      </group>
-    </template>
+  <span v-if="resultsLen">总共: {{ resultsLen }}</span>
+
+  <template v-if="data && userInput.length" v-for="(group, type) in results">
+    <group v-if="group.length">
+      <span>{{ type }} -- {{ group.length }}</span>
+      <word
+        v-for="word in group
+          .slice(0, 100)
+          .map(e => (Array.isArray(e) ? e : [e]))"
+      >
+        <left v-for="part in word">
+          <part
+            v-if="typeof part === 'string'"
+            :class="{ 'text-red-500': part === inputClean }"
+          >
+            {{ part }}
+          </part>
+          <part v-else :class="{ 'text-red-500': part.color }">
+            {{ part.word }}
+          </part>
+        </left>
+        <mid></mid>
+        <right>{{ getChinese(word) }}</right>
+      </word>
+    </group>
   </template>
 </template>
 
@@ -198,6 +206,9 @@ input {
   width: -webkit-fill-available;
   box-sizing: border-box;
   margin: 0.75rem;
+}
+div > span {
+  margin-left: 0.75rem;
 }
 group {
   display: block;
