@@ -2,12 +2,12 @@
 import { computed, ref, shallowRef } from 'vue'
 import { withTime } from './debug'
 console.clear()
-fetch('../WORDS.json')
+
+fetch('./WORDS.json')
   .then(res => res.json())
   .then(res => {
     data.value = res
   })
-
 // import data from './WORDS.json' assert { type: 'json' }
 // const { default: jsonObject } = await import('./WORDS.json', {
 //   assert: {
@@ -16,7 +16,7 @@ fetch('../WORDS.json')
 // })
 // const data = shallowRef<{ word: string; def: string }[]>()
 const data = shallowRef<any>({})
-const userInput = ref('')
+const userInput = ref('with')
 const inputClean = computed(() =>
   userInput.value
     .replaceAll('*', '')
