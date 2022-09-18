@@ -1,4 +1,4 @@
-import "./debug.js";
+import './debug.js'
 import { createApp } from 'vue'
 import 'uno.css'
 import App from './App.vue'

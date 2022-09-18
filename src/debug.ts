@@ -41,3 +41,10 @@ Object.defineProperties(Object.prototype, {
     },
   },
 })
+
+export function withTime(fn) {
+  console.time()
+  const r = fn()
+  console.timeEnd()
+  return r
+}
