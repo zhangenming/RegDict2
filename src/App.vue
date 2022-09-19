@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef } from 'vue'
+const userInput = ref('end') // with end
+import { computed, ref, shallowRef, onMounted } from 'vue'
 import { withTime } from './debug'
 console.clear()
 
@@ -35,7 +36,6 @@ fetch('./WORDS.json')
   })
 
 const data = shallowRef<any>({})
-const userInput = ref('ight') // with
 const inputClean = computed(() =>
   userInput.value
     .replaceAll('*', '')
@@ -54,10 +54,11 @@ const results = computed(() => {
   if (!inputCleanV) return []
   console.time('computed')
 
-  const dataV = _dataV.value
   const dataObj = data.value
+  const dataV = _dataV.value
   const dataWithLen = dataV.filter(e => e.length === inputCleanV.length)
   const dataWithLen1 = dataV.filter(e => e.length === inputCleanV.length + 1)
+  const dataWithLen_1 = dataV.filter(e => e.length === inputCleanV.length - 1)
 
   // stroke
   // stoker
@@ -116,7 +117,7 @@ const results = computed(() => {
             ]
           : []
       })
-    }).ll
+    })
 
   const 少 = [
     ...new Set(
@@ -137,6 +138,10 @@ const results = computed(() => {
   // const lens = dataV.filter((e) => e.length === userInputV.length)
 
   const R = {
+    best: doColor([
+      ...dataWithLen1.filter(e => e.startsWith(inputCleanV)),
+      ...dataWithLen1.filter(e => e.endsWith(inputCleanV)),
+    ]),
     start: doColor(
       dataV
         .filter(e => e.startsWith(inputCleanV))
@@ -188,20 +193,28 @@ function getChinese(word: any) {
     return String.fromCharCode(parseInt(match.replace(/\\u/, ''), 16))
   })
 }
+
+onMounted(() => {
+  inputDom.focus()
+})
 </script>
 
 <template>
-  <input :value="userInput" @input="userInput = ($event as any).target.value" />
+  <input
+    id="inputDom"
+    :value="userInput"
+    @input="userInput = ($event as any).target.value"
+  />
 
-  <span>总共: {{ resultsLen }}</span>
   <div>
+    <span>总共: {{ resultsLen }}</span>
     <div>
       <template v-for="(group, type) in results">
         <group v-if="group.length">
           <span>{{ type }} ({{ group.length }})</span>
           <word
             v-for="word in group
-          .slice(0, 30)
+          .slice(0, 20)
           .map((e:any) => (Array.isArray(e) ? e : [e]))"
           >
             <left>
@@ -228,20 +241,26 @@ function getChinese(word: any) {
 
 <style>
 ::-webkit-scrollbar {
-  display: none;
+  /* display: none; */
 }
 body {
   margin: 0;
+  font-size: 24px;
+  font-family: cursive, fangsong, serif, monospace;
 }
 #app {
-  width: fit-content;
+  height: 100vh;
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 #app > div {
   width: 100%;
   overflow-x: scroll;
+  flex-grow: 1;
+  border-top: 0.5px solid #aaa;
 }
 #app > div > div {
   width: fit-content;
@@ -253,36 +272,53 @@ input {
   background: aquamarine;
   padding: 10px;
   font-size: 50px;
+  border-radius: 10px;
+}
+input:focus {
+  color: yellow;
+  background: #6ab7e7;
+  caret-color: #0519ed;
+}
+span {
+  font-size: 30px;
+  font-weight: 900;
 }
 div > span {
-  margin-left: 0.75rem;
+  padding-bottom: 10px;
+  display: block;
 }
 group {
   display: block;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  padding: 0.75rem 1.75rem;
-}
-group span {
-  margin-left: -1rem;
-  font-weight: 900;
-  font-size: 20px;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 word {
   display: flex;
   align-items: center;
-  height: 2em;
-  padding: 0 10px;
+  padding: 5px 0;
+}
+group word:nth-of-type(odd) part {
+  background-color: white#ddd;
+}
+group word:nth-of-type(even) part {
+  background-color: #ddd;
 }
 group word:nth-of-type(even) {
   background-color: #ddd;
 }
-group word:hover {
+div group word:hover * {
   background-color: #6ab7e7;
+}
+group word left {
+  z-index: 2;
+}
+group word:hover right {
+  z-index: 3;
 }
 left {
   width: 200px;
   flex-shrink: 0;
+  padding-left: 20px;
 }
 mid {
   flex: 1;
