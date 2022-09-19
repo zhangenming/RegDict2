@@ -273,6 +273,7 @@ body {
 }
 input {
   width: -webkit-fill-available;
+  width: 100%;
   box-sizing: border-box;
   margin: 0.75rem;
   background: aquamarine;
