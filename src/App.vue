@@ -293,6 +293,8 @@ group {
 word {
   display: flex;
   padding: 2px 0;
+  display: flex;
+  align-items: center;
 }
 group word:nth-of-type(odd) part {
   background-color: white#ddd;
@@ -308,6 +310,8 @@ div group word:hover * {
 }
 group word left {
   z-index: 2;
+  display: flex;
+  align-items: center;
 }
 group word:hover right {
   z-index: 3;
@@ -316,13 +320,12 @@ left {
   width: 200px;
   flex-shrink: 0;
   padding-left: 10px;
-}
-mid {
-  flex: 1;
-  min-width: 30px;
+  display: flex;
+  align-items: center;
 }
 right {
   white-space: nowrap;
+  padding-right: 10px;
 }
 input:focus-visible {
   outline-offset: 0px;
