@@ -3,21 +3,40 @@ import { computed, ref, shallowRef } from 'vue'
 import { withTime } from './debug'
 console.clear()
 
-fetch('./WORDS.json')
-  .then(res => res.json())
+fetch('./WORDS1.json')
+  .then(res => res.text())
   .then(res => {
+    res = JSON.parse(res.replaceAll('%', '","').replaceAll('$', '":" '))
+    console.log(11, res)
+
+    window.res = res
     data.value = res
-    window.temp1 = Object.keys(res).ll
+
+    // const str = JSON.stringify(res)
+    // window.str = str
+    // window.gets = gets
+
+    function get(str, n: number) {
+      const R: any = {}
+      for (var i = 0; i < str.length; i++) {
+        const t = str.slice(i, i + n)
+        if (!R[t]) R[t] = 1
+        R[t]++
+      }
+      return Object.entries(R).sort((q, w) => w[1] - q[1])[0]
+    }
+
+    function gets(str) {
+      return Array(6)
+        .fill()
+        .map((_, i) => {
+          const x = get(str, i + 2)
+          const [l, r] = x
+          console.log([x, l, r, l.length * r])
+        })
+    }
   })
-//   const data = Object.keys(temp1).filter(e=>e.length===4)
-// const t = data.map(e=>e.slice(1)).map(e=>data.filter(ee=>ee.endsWith(e))).sort((q,w)=>w.length-q.length).ll
-// import data from './WORDS.json' assert { type: 'json' }
-// const { default: jsonObject } = await import('./WORDS.json', {
-//   assert: {
-//     type: 'json',
-//   },
-// })
-// const data = shallowRef<{ word: string; def: string }[]>()
+
 const data = shallowRef<any>({})
 const userInput = ref('will') // with
 const inputClean = computed(() =>
@@ -34,7 +53,7 @@ const inputClean = computed(() =>
 )
 const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
-  const inputCleanV = inputClean.value.ll
+  const inputCleanV = inputClean.value
   const dataV = _dataV.value
 
   if (!inputCleanV) return []
