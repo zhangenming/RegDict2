@@ -2,7 +2,7 @@
 import { computed, ref, shallowRef } from 'vue'
 import { withTime } from './debug'
 console.clear()
-
+fetch('./WORDS.json')
 fetch('./WORDS1.json')
   .then(res => res.text())
   .then(res => {
