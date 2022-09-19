@@ -6,41 +6,36 @@ console.clear()
 fetch('./WORDS.json')
   .then(res => res.json())
   .then(res => {
-    // res = withTime(() =>
-    //   JSON.parse(res.replaceAll('%', '","').replaceAll('$', '":" '))
-    // )
-    console.log(11, res)
-
-    window.res = res
+    res.__proto__ = Object.create(null) // avoid debuger .ll
     data.value = res
 
     // const str = JSON.stringify(res)
     // window.str = str
     // window.gets = gets
 
-    function get(str, n: number) {
-      const R: any = {}
-      for (var i = 0; i < str.length; i++) {
-        const t = str.slice(i, i + n)
-        if (!R[t]) R[t] = 1
-        R[t]++
-      }
-      return Object.entries(R).sort((q, w) => w[1] - q[1])[0]
-    }
+    // function get(str, n: number) {
+    //   const R: any = {}
+    //   for (var i = 0; i < str.length; i++) {
+    //     const t = str.slice(i, i + n)
+    //     if (!R[t]) R[t] = 1
+    //     R[t]++
+    //   }
+    //   return Object.entries(R).sort((q, w) => w[1] - q[1])[0]
+    // }
 
-    function gets(str) {
-      return Array(6)
-        .fill()
-        .map((_, i) => {
-          const x = get(str, i + 2)
-          const [l, r] = x
-          console.log([x, l, r, l.length * r])
-        })
-    }
+    // function gets(str) {
+    //   return Array(6)
+    //     .fill()
+    //     .map((_, i) => {
+    //       const x = get(str, i + 2)
+    //       const [l, r] = x
+    //       console.log([x, l, r, l.length * r])
+    //     })
+    // }
   })
 
 const data = shallowRef<any>({})
-const userInput = ref('will') // with
+const userInput = ref('ight') // with
 const inputClean = computed(() =>
   userInput.value
     .replaceAll('*', '')
@@ -56,11 +51,11 @@ const inputClean = computed(() =>
 const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
   const inputCleanV = inputClean.value
-  const dataV = _dataV.value
-
   if (!inputCleanV) return []
   console.time('computed')
 
+  const dataV = _dataV.value
+  const dataObj = data.value
   const dataWithLen = dataV.filter(e => e.length === inputCleanV.length)
   const dataWithLen1 = dataV.filter(e => e.length === inputCleanV.length + 1)
 
@@ -98,13 +93,13 @@ const results = computed(() => {
   })
 
   const alphabets = Array.from(Array(26), (_, i) => String.fromCharCode(97 + i))
-  const 多 = Array(inputCleanV.length - 1)
+  const 多 = Array(inputCleanV.length + 1)
     .fill(0)
     .flatMap((_, i) => {
       return alphabets.flatMap(alphabet => {
-        const l = inputCleanV.slice(0, i + 1)
-        const r = inputCleanV.slice(i + 1)
-        return dataWithLen1.includes(l + alphabet + r)
+        const l = inputCleanV.slice(0, i)
+        const r = inputCleanV.slice(i)
+        return dataObj[l + alphabet + r]
           ? [
               [
                 {
@@ -121,13 +116,16 @@ const results = computed(() => {
             ]
           : []
       })
-    })
+    }).ll
 
-  const 少 = Array.from({ length: inputCleanV.length }, (_, i) => {
-    const tmp = [...inputCleanV]
-    tmp.splice(i, 1)
-    return tmp.join('')
-  }).filter(e => dataV.includes(e))
+  const 少 = [
+    ...new Set(
+      [...inputCleanV].flatMap((_, i) => {
+        const target = inputCleanV.slice(0, i) + inputCleanV.slice(i + 1)
+        return dataObj[target] ? [target] : []
+      })
+    ),
+  ]
 
   // 拆分
   const cf = Array.from({ length: inputCleanV.length }, (_, i) => {
@@ -144,6 +142,9 @@ const results = computed(() => {
         .filter(e => e.startsWith(inputCleanV))
         .filter(e => e !== inputCleanV)
     ),
+    end: doColor(
+      dataV.filter(e => e.endsWith(inputCleanV)).filter(e => e !== inputCleanV)
+    ),
     mid: doColor(
       dataV.filter(
         e =>
@@ -151,9 +152,6 @@ const results = computed(() => {
           !e.endsWith(inputCleanV) &&
           !e.startsWith(inputCleanV)
       )
-    ),
-    end: doColor(
-      dataV.filter(e => e.endsWith(inputCleanV)).filter(e => e !== inputCleanV)
     ),
     顺序,
     替换,
@@ -199,11 +197,11 @@ function getChinese(word: any) {
 
   <template v-for="(group, type) in results">
     <group v-if="group.length">
-      <span>{{ type }} -- {{ group.length }}</span>
+      <span>{{ type }} ({{ group.length }})</span>
       <word
         v-for="word in group
-          .slice(0, 100)
-          .map(e => (Array.isArray(e) ? e : [e]))"
+          .slice(0, 10)
+          .map((e:any) => (Array.isArray(e) ? e : [e]))"
       >
         <left>
           <template v-for="part in word">
