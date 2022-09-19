@@ -194,40 +194,56 @@ function getChinese(word: any) {
   <input :value="userInput" @input="userInput = ($event as any).target.value" />
 
   <span>总共: {{ resultsLen }}</span>
-
-  <template v-for="(group, type) in results">
-    <group v-if="group.length">
-      <span>{{ type }} ({{ group.length }})</span>
-      <word
-        v-for="word in group
+  <div>
+    <div>
+      <template v-for="(group, type) in results">
+        <group v-if="group.length">
+          <span>{{ type }} ({{ group.length }})</span>
+          <word
+            v-for="word in group
           .slice(0, 10)
           .map((e:any) => (Array.isArray(e) ? e : [e]))"
-      >
-        <left>
-          <template v-for="part in word">
-            <part
-              v-if="typeof part === 'string'"
-              :class="{ 'text-red-500': part === inputClean }"
-            >
-              {{ part }}
-            </part>
-            <part v-else :class="{ 'text-red-500': part.color }">
-              {{ part.word }}
-            </part>
-          </template>
-        </left>
-        <!-- <mid></mid> -->
-        <right>{{ getChinese(word) }}</right>
-      </word>
-    </group>
-  </template>
+          >
+            <left>
+              <template v-for="part in word">
+                <part
+                  v-if="typeof part === 'string'"
+                  :class="{ 'text-red-500': part === inputClean }"
+                >
+                  {{ part }}
+                </part>
+                <part v-else :class="{ 'text-red-500': part.color }">
+                  {{ part.word }}
+                </part>
+              </template>
+            </left>
+            <!-- <mid></mid> -->
+            <right>{{ getChinese(word) }}</right>
+          </word>
+        </group>
+      </template>
+    </div>
+  </div>
 </template>
 
 <style>
+::-webkit-scrollbar {
+  display: none;
+}
 body {
   margin: 0;
 }
 #app {
+  width: fit-content;
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+#app > div {
+  width: 100%;
+  overflow-x: scroll;
+}
+#app > div > div {
   width: fit-content;
 }
 input {
