@@ -6,9 +6,9 @@ console.clear()
 fetch('./WORDS.json')
   .then(res => res.json())
   .then(res => {
+    res.ll
     res.__proto__ = Object.create(null) // avoid debuger .ll
     data.value = res
-
     // const str = JSON.stringify(res)
     // window.str = str
     // window.gets = gets
@@ -201,7 +201,7 @@ function getChinese(word: any) {
           <span>{{ type }} ({{ group.length }})</span>
           <word
             v-for="word in group
-          .slice(0, 10)
+          .slice(0, 30)
           .map((e:any) => (Array.isArray(e) ? e : [e]))"
           >
             <left>
