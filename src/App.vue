@@ -200,14 +200,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <input
-    id="inputDom"
-    :value="userInput"
-    @input="userInput = ($event as any).target.value"
-  />
-
-  <div>
-    <span>总共: {{ resultsLen }}</span>
+  <div class="control">
+    <input
+      id="inputDom"
+      :value="userInput"
+      @input="userInput = ($event as any).target.value"
+    />
+    <span>{{ resultsLen }}</span>
+  </div>
+  <div class="word">
     <div>
       <template v-for="(group, type) in results">
         <group v-if="group.length">
@@ -245,7 +246,7 @@ onMounted(() => {
 }
 body {
   margin: 0;
-  font-size: 24px;
+  font-size: 20px;
   font-family: cursive, fangsong, serif, monospace;
 }
 #app {
@@ -256,13 +257,18 @@ body {
   display: flex;
   flex-direction: column;
 }
-#app > div {
+.control {
+  display: flex;
+  align-items: baseline;
+  align-content: center;
+}
+.word {
   width: 100%;
   overflow-x: scroll;
   flex-grow: 1;
   border-top: 0.5px solid #aaa;
 }
-#app > div > div {
+.word > div {
   width: fit-content;
 }
 input {
@@ -271,7 +277,7 @@ input {
   margin: 0.75rem;
   background: aquamarine;
   padding: 10px;
-  font-size: 50px;
+  font-size: 35px;
   border-radius: 10px;
 }
 input:focus {
@@ -280,7 +286,7 @@ input:focus {
   caret-color: #0519ed;
 }
 span {
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 900;
 }
 div > span {
@@ -289,8 +295,7 @@ div > span {
 }
 group {
   display: block;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 3rem;
 }
 word {
   display: flex;
