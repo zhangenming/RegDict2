@@ -32,11 +32,10 @@ const inputClean = computed(() =>
 )
 const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
-  const userInputV = userInput.value
-  const inputCleanV = inputClean.value
+  const inputCleanV = inputClean.value.ll
   const dataV = _dataV.value
 
-  if (!userInputV) return []
+  if (!inputCleanV) return []
   console.time('computed')
 
   const dataWithLen = dataV.filter(e => e.length === inputCleanV.length)
@@ -114,7 +113,7 @@ const results = computed(() => {
     return tmp.join('')
   }).filter(e => dataV.includes(e))
 
-  const lens = dataV.filter(e => e.length === userInputV.length)
+  // const lens = dataV.filter((e) => e.length === userInputV.length)
 
   const R = {
     start: doColor(
@@ -171,7 +170,10 @@ function getChinese(word: any) {
 </script>
 
 <template>
-  <input v-model="userInput" />
+  <input
+    :value="userInput"
+    @input="userInput = ($event as any).target.value.replaceAll('\'', '')"
+  />
 
   <span>总共: {{ resultsLen }}</span>
 
