@@ -53,7 +53,7 @@ const results = computed(() => {
   const inputCleanV = inputClean.value
   if (!inputCleanV) return []
   console.time('computed')
-
+  inputCleanV.ll
   const dataObj = data.value
   const dataV = _dataV.value
   const dataWithLen = dataV.filter(e => e.length === inputCleanV.length)
@@ -332,5 +332,9 @@ mid {
 }
 right {
   white-space: nowrap;
+}
+input:focus-visible {
+  outline-offset: 0px;
+  outline: none;
 }
 </style>
