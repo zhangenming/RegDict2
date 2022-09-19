@@ -2,40 +2,47 @@
 import { computed, ref, shallowRef } from 'vue'
 import { withTime } from './debug'
 console.clear()
+
 fetch('./WORDS.json')
+
+fetch('./WORDS0.json')
+
 fetch('./WORDS1.json')
-  .then(res => res.text())
-  .then(res => {
-    res = JSON.parse(res.replaceAll('%', '","').replaceAll('$', '":" '))
-    console.log(11, res)
+// fetch('./WORDS0.json')
+//   .then(res => res.json())
+//   .then(res => {
+//     // res = withTime(() =>
+//     //   JSON.parse(res.replaceAll('%', '","').replaceAll('$', '":" '))
+//     // )
+//     console.log(11, res)
 
-    window.res = res
-    data.value = res
+//     window.res = res
+//     data.value = res
 
-    // const str = JSON.stringify(res)
-    // window.str = str
-    // window.gets = gets
+//     // const str = JSON.stringify(res)
+//     // window.str = str
+//     // window.gets = gets
 
-    function get(str, n: number) {
-      const R: any = {}
-      for (var i = 0; i < str.length; i++) {
-        const t = str.slice(i, i + n)
-        if (!R[t]) R[t] = 1
-        R[t]++
-      }
-      return Object.entries(R).sort((q, w) => w[1] - q[1])[0]
-    }
+//     function get(str, n: number) {
+//       const R: any = {}
+//       for (var i = 0; i < str.length; i++) {
+//         const t = str.slice(i, i + n)
+//         if (!R[t]) R[t] = 1
+//         R[t]++
+//       }
+//       return Object.entries(R).sort((q, w) => w[1] - q[1])[0]
+//     }
 
-    function gets(str) {
-      return Array(6)
-        .fill()
-        .map((_, i) => {
-          const x = get(str, i + 2)
-          const [l, r] = x
-          console.log([x, l, r, l.length * r])
-        })
-    }
-  })
+//     function gets(str) {
+//       return Array(6)
+//         .fill()
+//         .map((_, i) => {
+//           const x = get(str, i + 2)
+//           const [l, r] = x
+//           console.log([x, l, r, l.length * r])
+//         })
+//     }
+//   })
 
 const data = shallowRef<any>({})
 const userInput = ref('will') // with
