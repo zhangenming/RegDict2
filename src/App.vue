@@ -30,6 +30,7 @@ const inputClean = computed(() =>
     .replaceAll('-', '')
     .replaceAll('=', '')
     .replaceAll("'", '')
+    .toLowerCase()
 )
 const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
