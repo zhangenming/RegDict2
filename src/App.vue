@@ -259,7 +259,7 @@ body {
 }
 .control {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   align-content: center;
 }
 .word {
@@ -275,9 +275,9 @@ input {
   width: -webkit-fill-available;
   width: 100%;
   box-sizing: border-box;
-  margin: 0.75rem;
+  margin: 10px;
   background: aquamarine;
-  padding: 10px;
+  padding: 0 10px;
   font-size: 35px;
   border-radius: 10px;
 }
@@ -286,22 +286,13 @@ input:focus {
   background: #6ab7e7;
   caret-color: #0519ed;
 }
-span {
-  font-size: 25px;
-  font-weight: 900;
-}
-div > span {
-  padding-bottom: 10px;
-  display: block;
-}
 group {
   display: block;
   margin-bottom: 3rem;
 }
 word {
   display: flex;
-  align-items: center;
-  padding: 5px 0;
+  padding: 2px 0;
 }
 group word:nth-of-type(odd) part {
   background-color: white#ddd;
@@ -324,7 +315,7 @@ group word:hover right {
 left {
   width: 200px;
   flex-shrink: 0;
-  padding-left: 20px;
+  padding-left: 10px;
 }
 mid {
   flex: 1;
