@@ -29,6 +29,7 @@ const inputClean = computed(() =>
     .replaceAll('+', '')
     .replaceAll('-', '')
     .replaceAll('=', '')
+    .replaceAll("'", '')
 )
 const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
@@ -170,10 +171,7 @@ function getChinese(word: any) {
 </script>
 
 <template>
-  <input
-    :value="userInput"
-    @input="userInput = ($event as any).target.value.replaceAll('\'', '')"
-  />
+  <input :value="userInput" @input="userInput = ($event as any).target.value" />
 
   <span>总共: {{ resultsLen }}</span>
 
