@@ -336,12 +336,12 @@ word:focus left part {
   font-weight: 900;
 }
 word:focus right {
-  font-weight: 900;
+  /* font-weight: 900; */
   color: slateblue;
   background: aquamarine;
   z-index: 2;
   position: relative;
-  left: -1px;
+  left: -0.6px;
   border: 1px solid;
   border-radius: 0 10px 10px 0;
   white-space: inherit;
@@ -357,6 +357,11 @@ word:focus right {
   /* flex-direction: row; */
   /* height: 110px; */
   /* overflow: hidden; */
+}
+right,
+left part {
+  display: flex;
+  align-items: center;
 }
 word:nth-of-type(odd) part {
   background-color: white#ddd;
