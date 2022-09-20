@@ -261,6 +261,25 @@ body {
   gap: 10px;
   background: #eee;
 }
+input {
+  width: 100%;
+  box-sizing: border-box;
+  background: aquamarine;
+  font-size: 35px;
+  border-radius: 10px;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+}
+input:focus {
+  color: yellow;
+  background: #6ab7e7;
+  caret-color: #0519ed;
+}
+input:focus-visible {
+  outline-offset: 0px;
+  outline: none;
+}
 .word {
   width: 100%;
   overflow-x: auto;
@@ -271,19 +290,6 @@ body {
 }
 .word > div {
   width: fit-content;
-}
-input {
-  width: 100%;
-  box-sizing: border-box;
-  background: aquamarine;
-  font-size: 35px;
-  border-radius: 10px;
-  padding-left: 10px;
-}
-input:focus {
-  color: yellow;
-  background: #6ab7e7;
-  caret-color: #0519ed;
 }
 group {
   display: block;
@@ -319,15 +325,9 @@ left {
   width: 200px;
   flex-shrink: 0;
   padding-left: 10px;
-  display: flex;
-  align-items: center;
 }
 right {
   white-space: nowrap;
   padding-right: 10px;
-}
-input:focus-visible {
-  outline-offset: 0px;
-  outline: none;
 }
 </style>
