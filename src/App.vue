@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, onMounted } from 'vue'
+import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
 const userInput = ref('end') // with end
 console.clear()
@@ -17,7 +17,15 @@ const wordsObj = shallowRef<any>({})
 const inputClean = computed(() =>
   userInput.value.replaceAll(/[*.!?+-/=']/g, '').toLowerCase()
 )
+
+const rightPos = ref('500px')
 const results = computed(() => {
+  nextTick(() => {
+    const dom = document.querySelector('word')
+    if (!dom) return
+    rightPos.value = getComputedStyle(dom).width
+  })
+
   const inputCleanV = inputClean.value
   if (!inputCleanV) return []
 
@@ -115,7 +123,7 @@ const results = computed(() => {
     start,
     end,
     mid,
-    多,
+    // 多,
     少,
     顺序,
     替换,
@@ -123,10 +131,9 @@ const results = computed(() => {
 
   const repeat: any = {}
   for (const key in R) {
-    // group
-    R[key] = R[key].flatMap((word: any) => {
+    const group = R[key]
+    R[key] = group.flatMap((word: any) => {
       const isO = typeof word === 'object'
-
       // 重复
       const key = isO ? word.map((e: any) => e.word).join('') : word
       if (repeat[key]) {
@@ -136,6 +143,8 @@ const results = computed(() => {
       repeat[key] = true
       return isO ? [word] : [doColor(word)]
     })
+
+    if (!R[key].length) delete R[key]
   }
   console.timeEnd('computed')
   return R
@@ -145,7 +154,7 @@ const results = computed(() => {
       .replaceAll(inputClean.value, `-${inputClean.value}-`)
       .split('-')
       .filter(e => e !== '')
-      .map(word => ({ word, color: word === inputCleanV }))
+      .map(part => ({ part, color: part === inputCleanV }))
   }
 })
 const resultsLen = computed(() => {
@@ -160,7 +169,7 @@ function getChinese(word: any) {
     if (typeof now === 'string') {
       all += now
     } else {
-      all += now.word
+      all += now.part
     }
     return all
   }, '')
@@ -201,22 +210,15 @@ onMounted(() => {
   </div>
   <div class="container">
     <div>
-      <template v-for="(group, type) in results.ll">
-        <group v-if="group.length">
-          <span>{{ type }}({{ group.length }})</span>
-          <word v-for="word in group.slice(0, 10)" tabIndex="1">
-            <left>
-              <part
-                v-for="part in word"
-                :class="{ 'text-red-500': part.color }"
-              >
-                {{ part.word }}
-              </part>
-            </left>
-            <right>{{ getChinese(word) }}</right>
-          </word>
-        </group>
-      </template>
+      <group v-for="(group, type) in results.ll">
+        <span>{{ type }}({{ group.length }})</span>
+        <word v-for="word in group.slice(0, 10)" tabIndex="1">
+          <part v-for="part in word" :class="{ 'text-red-500': part.color }">
+            {{ part.part }}
+          </part>
+          <right>{{ getChinese(word) }}</right>
+        </word>
+      </group>
     </div>
   </div>
 </template>
@@ -226,6 +228,7 @@ body {
   margin: 0;
   font-size: 20px;
   font-family: fangsong, serif, monospace;
+  background: blanchedalmond;
 }
 #app {
   height: 100vh;
@@ -277,16 +280,34 @@ group:not(:nth-last-of-type(1)) {
   display: block;
   margin-bottom: 3rem;
 }
+
 word {
-  padding: 2px 0;
   height: 27px;
   display: flex;
   align-items: center;
   align-content: center;
+  position: relative;
 }
 word:active {
   color: red;
 }
+left {
+  display: flex;
+  align-items: center;
+  width: 200px;
+  flex-shrink: 0;
+  padding: 0 10px;
+  height: 27px;
+}
+right {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  position: absolute;
+  left: calc(v-bind(rightPos) + 20px);
+  transition: left 0.3s;
+}
+
 word:focus left,
 word:focus left part {
   width: auto;
@@ -329,34 +350,24 @@ word:focus right {
   /* height: 110px; */
   /* overflow: hidden; */
 }
-right,
-left {
-  display: flex;
-  align-items: center;
-}
-word:nth-of-type(even) {
+/* word:nth-of-type(even) {
   background-color: white;
 }
 word:nth-of-type(odd) {
   background-color: #ddd;
 }
+word:nth-of-type(even) right {
+  background-color: white;
+}
+word:nth-of-type(odd) right {
+  background-color: #ddd;
+} */
 /* div word:hover * {
   background-color: #6ab7e7;
 }
 word:hover right {
   z-index: 3;
 } */
-left {
-  width: 200px;
-  flex-shrink: 0;
-  padding: 0 10px;
-  height: 27px;
-}
-
-right {
-  white-space: nowrap;
-  padding: 10px;
-}
 
 * {
   box-sizing: border-box;
