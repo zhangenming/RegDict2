@@ -253,7 +253,7 @@ onMounted(() => {
 body {
   margin: 0;
   font-size: 20px;
-  font-family: cursive, fangsong, serif, monospace;
+  font-family: fangsong, serif, monospace;
 }
 #app {
   height: 100vh;
@@ -341,7 +341,7 @@ word:focus right {
   background: aquamarine;
   z-index: 2;
   position: relative;
-  left: -0.9px;
+  left: -0.8px;
   border: 1px solid;
   border-radius: 0 10px 10px 0;
   white-space: inherit;
