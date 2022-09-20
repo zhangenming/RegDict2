@@ -270,11 +270,12 @@ input {
   padding-left: 10px;
   display: flex;
   align-items: center;
+  border: 1px solid #aaa;
 }
 input:focus {
   color: yellow;
   background: #6ab7e7;
-  caret-color: #0519ed;
+  caret-color: yellow;
 }
 input:focus-visible {
   outline-offset: 0px;
