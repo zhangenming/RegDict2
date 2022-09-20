@@ -273,21 +273,20 @@ body {
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
   /* display: none; */
-  width: 2px;
+  width: 1rem;
+  height: 2rem;
 }
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
-  border-radius: 10px;
   background: red;
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
-  border-radius: 10px;
   background: aquamarine;
 }
-::-webkit-scrollbar-thumb:window-inactive {
+/* ::-webkit-scrollbar-thumb:window-inactive {
   background: #000;
-}
+} */
 input {
   width: 100%;
   box-sizing: border-box;
