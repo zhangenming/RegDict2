@@ -339,20 +339,27 @@ word:active {
 }
 word:focus {
   width: 100vw;
+  height: 20px;
 }
-word:focus left {
+word:focus left,
+word:focus left part {
   width: auto;
+  background: aquamarine;
 }
 word:focus right {
   color: darkcyan;
+  background: aquamarine;
+  border: 1px solid;
+  border-left: none;
+  border-radius: 0 10px 10px 0;
   white-space: inherit;
   width: min-content;
 
   white-space: pre;
-  text-indent: -0.6rem;
+  text-indent: -0.5em;
+  flex-grow: 1;
   /* text-overflow: ellipsis; */
   /* width: 290px; */
-  flex-grow: 1;
   /* word-wrap: break-word; */
   /* word-break: break-word; */
   /* display: flex; */
@@ -360,6 +367,10 @@ word:focus right {
   /* flex-direction: row; */
   /* height: 110px; */
   /* overflow: hidden; */
+}
+word,
+right {
+  transition: height 1s;
 }
 word:nth-of-type(odd) part {
   background-color: white#ddd;
@@ -370,18 +381,19 @@ word:nth-of-type(even) part {
 word:nth-of-type(even) {
   background-color: #ddd;
 }
-div word:hover * {
+/* div word:hover * {
   background-color: #6ab7e7;
 }
+word:hover right {
+  z-index: 3;
+} */
 left {
   z-index: 2;
   width: 200px;
   flex-shrink: 0;
   padding: 0 10px;
 }
-word:hover right {
-  z-index: 3;
-}
+
 right {
   white-space: nowrap;
   padding-right: 10px;
