@@ -341,7 +341,7 @@ word:focus right {
   background: aquamarine;
   z-index: 2;
   position: relative;
-  left: -0.6px;
+  left: -0.9px;
   border: 1px solid;
   border-radius: 0 10px 10px 0;
   white-space: inherit;
@@ -359,7 +359,7 @@ word:focus right {
   /* overflow: hidden; */
 }
 right,
-left part {
+left {
   display: flex;
   align-items: center;
 }
