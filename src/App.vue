@@ -324,12 +324,20 @@ word:focus {
   color: darkcyan;
 }
 word:focus left {
+  color: slateblue;
   background: aquamarine;
-  /* border: 1px solid; */
+  border: 1px solid;
+  border-left: none;
   border-right: none;
   z-index: 3;
 }
+word:focus left part {
+  color: slateblue;
+  font-weight: 900;
+}
 word:focus right {
+  font-weight: 900;
+  color: slateblue;
   background: aquamarine;
   z-index: 2;
   position: relative;
@@ -349,10 +357,6 @@ word:focus right {
   /* flex-direction: row; */
   /* height: 110px; */
   /* overflow: hidden; */
-}
-word,
-right {
-  transition: height 1s;
 }
 word:nth-of-type(odd) part {
   background-color: white#ddd;
@@ -375,7 +379,7 @@ left {
 
 right {
   white-space: nowrap;
-  padding: 0 10px;
+  padding: 10px;
 }
 
 * {
