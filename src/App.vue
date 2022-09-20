@@ -1,55 +1,33 @@
 <script setup lang="ts">
-const userInput = ref('end') // with end
 import { computed, ref, shallowRef, onMounted } from 'vue'
 import { withTime } from './debug'
+const userInput = ref('end') // with end
 console.clear()
 
+let wordsArr: string[] = []
 fetch('./WORDS.json')
   .then(res => res.json())
   .then(res => {
-    res.ll
-    res.__proto__ = Object.create(null) // avoid debuger .ll
-    data.value = res
-    // const str = JSON.stringify(res)
-    // window.str = str
-    // window.gets = gets
-
-    // function get(str, n: number) {
-    //   const R: any = {}
-    //   for (var i = 0; i < str.length; i++) {
-    //     const t = str.slice(i, i + n)
-    //     if (!R[t]) R[t] = 1
-    //     R[t]++
-    //   }
-    //   return Object.entries(R).sort((q, w) => w[1] - q[1])[0]
-    // }
-
-    // function gets(str) {
-    //   return Array(6)
-    //     .fill()
-    //     .map((_, i) => {
-    //       const x = get(str, i + 2)
-    //       const [l, r] = x
-    //       console.log([x, l, r, l.length * r])
-    //     })
-    // }
+    res.__proto__ = Object.create(null) // avoid debuger
+    wordsObj.value = res
+    wordsArr = Object.keys(res)
   })
 
-const data = shallowRef<any>({})
+const wordsObj = shallowRef<any>({})
 const inputClean = computed(() =>
   userInput.value.replaceAll(/[*.!?+-/=']/g, '').toLowerCase()
 )
-const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
   const inputCleanV = inputClean.value
   if (!inputCleanV) return []
+
   console.time('computed')
-  inputCleanV.ll
-  const dataObj = data.value
-  const dataV = _dataV.value
-  const dataWithLen = dataV.filter(e => e.length === inputCleanV.length)
-  const dataWithLen1 = dataV.filter(e => e.length === inputCleanV.length + 1)
-  const dataWithLen_1 = dataV.filter(e => e.length === inputCleanV.length - 1)
+  const wordsObjV = wordsObj.value
+
+  const mid = wordsArr.filter(e => e.includes(inputCleanV))
+  const start = mid.filter(e => e.startsWith(inputCleanV))
+  const end = mid.filter(e => e.endsWith(inputCleanV))
+  const dataWithLen = mid.filter(e => e.length === inputCleanV.length)
 
   // stroke
   // stoker
@@ -91,7 +69,7 @@ const results = computed(() => {
       return alphabets.flatMap(alphabet => {
         const l = inputCleanV.slice(0, i)
         const r = inputCleanV.slice(i)
-        return dataObj[l + alphabet + r]
+        return wordsObjV[l + alphabet + r]
           ? [
               [
                 {
@@ -114,65 +92,67 @@ const results = computed(() => {
     ...new Set(
       [...inputCleanV].flatMap((_, i) => {
         const target = inputCleanV.slice(0, i) + inputCleanV.slice(i + 1)
-        return dataObj[target] ? [target] : []
+        return wordsObjV[target] ? [target] : []
       })
     ),
   ]
 
   // 拆分
-  const cf = Array.from({ length: inputCleanV.length }, (_, i) => {
-    const tmp = [...inputCleanV]
-    tmp.splice(i, 1)
-    return tmp.join('')
-  }).filter(e => dataV.includes(e))
+  // const cf = Array.from({ length: inputCleanV.length }, (_, i) => {
+  //   const tmp = [...inputCleanV]
+  //   tmp.splice(i, 1)
+  //   return tmp.join('')
+  // }).filter(e => dataV.includes(e))
 
   // const lens = dataV.filter((e) => e.length === userInputV.length)
 
-  const R = {
-    best: doColor([
-      ...dataWithLen.filter(e => e === inputCleanV),
-      ...dataWithLen1.filter(e => e.startsWith(inputCleanV)),
-      ...dataWithLen1.filter(e => e.endsWith(inputCleanV)),
-    ]),
-    start: doColor(
-      dataV
-        .filter(e => e !== inputCleanV)
-        .filter(e => e.startsWith(inputCleanV))
-        .filter(e => e.length === inputCleanV.length)
-    ),
-    end: doColor(
-      dataV
-        .filter(e => e !== inputCleanV)
-        .filter(e => e.endsWith(inputCleanV))
-        .filter(e => e.length === inputCleanV.length)
-    ),
-    mid: doColor(
-      dataV.filter(
-        e =>
-          e.includes(inputCleanV) &&
-          !e.endsWith(inputCleanV) &&
-          !e.startsWith(inputCleanV)
-      )
-    ),
-    顺序,
-    替换,
+  const R: any = {
+    best: [
+      ...mid.filter(e => e === inputCleanV),
+      ...start.filter(e => e.length === inputCleanV.length + 1),
+      ...end.filter(e => e.length === inputCleanV.length + 1),
+    ],
+    start,
+    end,
+    mid,
     多,
     少,
+    顺序,
+    替换,
+  }
+
+  const repeat: any = {}
+  for (const key in R) {
+    // group
+    R[key] = R[key].flatMap((word: any) => {
+      const isO = typeof word === 'object'
+
+      // 重复
+      const key = isO ? word.map((e: any) => e.word).join('') : word
+      if (repeat[key]) {
+        return []
+      }
+
+      repeat[key] = true
+      return isO ? [word] : [doColor(word)]
+    })
   }
   console.timeEnd('computed')
   return R
 
-  function doColor(words: string[]) {
-    return words.map(e =>
-      e
-        .replaceAll(inputClean.value, `-${inputClean.value}-`)
-        .split('-')
-        .filter(e => e !== '')
-    )
+  function doColor(word: string) {
+    return word
+      .replaceAll(inputClean.value, `-${inputClean.value}-`)
+      .split('-')
+      .filter(e => e !== '')
+      .map(word => ({ word, color: word === inputCleanV }))
   }
 })
 const resultsLen = computed(() => {
-  return Object.values(results.value).reduce((all, now) => all + now.length, 0)
+  return Object.values(results.value).reduce(
+    (all, now: any) => all + now.length,
+    0
+  )
 })
 
 function getChinese(word: any) {
@@ -185,9 +165,12 @@ function getChinese(word: any) {
     return all
   }, '')
 
-  return data.value[china].replace(/\\u[\dA-Fa-f]{4}/g, function (match: any) {
-    return String.fromCharCode(parseInt(match.replace(/\\u/, ''), 16))
-  })
+  return wordsObj.value[china].replace(
+    /\\u[\dA-Fa-f]{4}/g,
+    function (match: any) {
+      return String.fromCharCode(parseInt(match.replace(/\\u/, ''), 16))
+    }
+  )
 }
 
 onMounted(() => {
@@ -218,29 +201,18 @@ onMounted(() => {
   </div>
   <div class="container">
     <div>
-      <template v-for="(group, type) in results">
+      <template v-for="(group, type) in results.ll">
         <group v-if="group.length">
           <span>{{ type }}({{ group.length }})</span>
-          <word
-            v-for="word in group
-          .slice(0, 20)
-          .map((e:any) => (Array.isArray(e) ? e : [e]))"
-            tabIndex="1"
-          >
+          <word v-for="word in group.slice(0, 10)" tabIndex="1">
             <left>
-              <template v-for="part in word">
-                <part
-                  v-if="typeof part === 'string'"
-                  :class="{ 'text-red-500': part === inputClean }"
-                >
-                  {{ part }}
-                </part>
-                <part v-else :class="{ 'text-red-500': part.color }">
-                  {{ part.word }}
-                </part>
-              </template>
+              <part
+                v-for="part in word"
+                :class="{ 'text-red-500': part.color }"
+              >
+                {{ part.word }}
+              </part>
             </left>
-            <!-- <mid></mid> -->
             <right>{{ getChinese(word) }}</right>
           </word>
         </group>
@@ -334,10 +306,8 @@ word:focus left {
 }
 word:focus left part {
   color: slateblue;
-  /* font-weight: 900; */
 }
 word:focus right {
-  /* font-weight: 900; */
   color: slateblue;
   background: aquamarine;
   z-index: 2;
