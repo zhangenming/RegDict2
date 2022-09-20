@@ -37,16 +37,7 @@ fetch('./WORDS.json')
 
 const data = shallowRef<any>({})
 const inputClean = computed(() =>
-  userInput.value
-    .replaceAll('*', '')
-    .replaceAll('.', '')
-    .replaceAll('!', '')
-    .replaceAll('?', '')
-    .replaceAll('+', '')
-    .replaceAll('-', '')
-    .replaceAll('=', '')
-    .replaceAll("'", '')
-    .toLowerCase()
+  userInput.value.replaceAll(/[*.!?+-/=']/g, '').toLowerCase()
 )
 const _dataV = computed(() => Object.keys(data.value!))
 const results = computed(() => {
@@ -139,16 +130,21 @@ const results = computed(() => {
 
   const R = {
     best: doColor([
+      ...dataWithLen.filter(e => e === inputCleanV),
       ...dataWithLen1.filter(e => e.startsWith(inputCleanV)),
       ...dataWithLen1.filter(e => e.endsWith(inputCleanV)),
     ]),
     start: doColor(
       dataV
-        .filter(e => e.startsWith(inputCleanV))
         .filter(e => e !== inputCleanV)
+        .filter(e => e.startsWith(inputCleanV))
+        .filter(e => e.length === inputCleanV.length)
     ),
     end: doColor(
-      dataV.filter(e => e.endsWith(inputCleanV)).filter(e => e !== inputCleanV)
+      dataV
+        .filter(e => e !== inputCleanV)
+        .filter(e => e.endsWith(inputCleanV))
+        .filter(e => e.length === inputCleanV.length)
     ),
     mid: doColor(
       dataV.filter(
@@ -203,6 +199,7 @@ onMounted(() => {
   <div class="control">
     <input
       id="inputDom"
+      autocomplete="off"
       :value="userInput"
       @input="userInput = ($event as any).target.value"
     />
@@ -212,7 +209,7 @@ onMounted(() => {
     <div>
       <template v-for="(group, type) in results">
         <group v-if="group.length">
-          <span>{{ type }} ({{ group.length }})</span>
+          <span>{{ type }}({{ group.length }})</span>
           <word
             v-for="word in group
           .slice(0, 20)
@@ -252,7 +249,6 @@ body {
 #app {
   height: 100vh;
   width: 100%;
-  padding: 8px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -261,25 +257,28 @@ body {
   display: flex;
   align-items: center;
   align-content: center;
+  padding: 10px;
+  gap: 10px;
+  background: #eee;
 }
 .word {
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
   flex-grow: 1;
   border-top: 0.5px solid #aaa;
+  padding: 10px;
+  box-sizing: border-box;
 }
 .word > div {
   width: fit-content;
 }
 input {
-  width: -webkit-fill-available;
   width: 100%;
   box-sizing: border-box;
-  margin: 10px;
   background: aquamarine;
-  padding: 0 10px;
   font-size: 35px;
   border-radius: 10px;
+  padding-left: 10px;
 }
 input:focus {
   color: yellow;
