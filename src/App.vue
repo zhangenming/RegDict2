@@ -323,24 +323,23 @@ word:active {
 word:focus left,
 word:focus left part {
   width: auto;
-  background: aquamarine;
 }
 word:focus {
   width: 100vw;
-  height: 20px;
+  height: 27px;
   color: darkcyan;
-  background: aquamarine;
 }
 word:focus left {
+  background: aquamarine;
   border: 1px solid;
   border-right: none;
   z-index: 3;
-  position: relative;
-  right: -1px;
 }
 word:focus right {
   background: aquamarine;
   z-index: 2;
+  position: relative;
+  left: -1px;
   border: 1px solid;
   border-radius: 0 10px 10px 0;
   white-space: inherit;
@@ -364,9 +363,6 @@ right {
 word:nth-of-type(odd) part {
   background-color: white#ddd;
 }
-word:nth-of-type(even) part {
-  background-color: #ddd;
-}
 word:nth-of-type(even) {
   background-color: #ddd;
 }
@@ -389,7 +385,7 @@ right {
 
 * {
   box-sizing: border-box;
-  transition: all 1.5s;
+  /* transition: all 1.5s; */
 }
 *:focus {
   outline: none;
