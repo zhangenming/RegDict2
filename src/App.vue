@@ -306,10 +306,11 @@ group:not(:nth-last-of-type(1)) {
   margin-bottom: 3rem;
 }
 word {
-  display: flex;
-  align-items: center;
   padding: 2px 0;
   height: 27px;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 word:active {
   color: red;
@@ -333,7 +334,7 @@ word:focus left {
 }
 word:focus left part {
   color: slateblue;
-  font-weight: 900;
+  /* font-weight: 900; */
 }
 word:focus right {
   /* font-weight: 900; */
@@ -341,7 +342,7 @@ word:focus right {
   background: aquamarine;
   z-index: 2;
   position: relative;
-  left: -0.8px;
+  left: -0.7px;
   border: 1px solid;
   border-radius: 0 10px 10px 0;
   white-space: inherit;
@@ -363,10 +364,10 @@ left {
   display: flex;
   align-items: center;
 }
-word:nth-of-type(odd) part {
-  background-color: white#ddd;
-}
 word:nth-of-type(even) {
+  background-color: white;
+}
+word:nth-of-type(odd) {
   background-color: #ddd;
 }
 /* div word:hover * {
