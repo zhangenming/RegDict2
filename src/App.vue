@@ -320,28 +320,33 @@ word {
 word:active {
   color: red;
 }
-word:focus {
-  width: 100vw;
-  height: 20px;
-}
 word:focus left,
 word:focus left part {
   width: auto;
   background: aquamarine;
 }
-word:focus right {
-  z-index: 2;
+word:focus {
+  width: 100vw;
+  height: 20px;
   color: darkcyan;
   background: aquamarine;
+}
+word:focus left {
   border: 1px solid;
-  border-left: none;
+  border-right: none;
+  z-index: 3;
+  position: relative;
+  right: -1px;
+}
+word:focus right {
+  background: aquamarine;
+  z-index: 2;
+  border: 1px solid;
   border-radius: 0 10px 10px 0;
   white-space: inherit;
   width: min-content;
-
   white-space: pre;
-  text-indent: -0.5em;
-  flex-grow: 1;
+  text-indent: -0.6em;
   /* text-overflow: ellipsis; */
   /* width: 290px; */
   /* word-wrap: break-word; */
@@ -372,7 +377,6 @@ word:hover right {
   z-index: 3;
 } */
 left {
-  z-index: 2;
   width: 200px;
   flex-shrink: 0;
   padding: 0 10px;
@@ -380,11 +384,12 @@ left {
 
 right {
   white-space: nowrap;
-  padding-right: 10px;
+  padding: 0 10px;
 }
 
 * {
   box-sizing: border-box;
+  transition: all 1.5s;
 }
 *:focus {
   outline: none;
