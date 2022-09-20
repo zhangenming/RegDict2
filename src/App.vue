@@ -287,37 +287,35 @@ word {
   align-items: center;
   align-content: center;
   position: relative;
+  padding-right: 500px;
 }
-word:active {
-  color: red;
-}
-left {
-  display: flex;
-  align-items: center;
-  width: 200px;
-  flex-shrink: 0;
-  padding: 0 10px;
-  height: 27px;
+
+part {
+  height: 100%;
 }
 right {
   display: flex;
   align-items: center;
   white-space: nowrap;
   position: absolute;
-  left: calc(v-bind(rightPos) + 20px);
+  left: calc(v-bind(rightPos) - 500px);
   transition: left 0.3s;
+  padding-left: 20px;
+  height: inherit;
 }
 
-word:focus left,
-word:focus left part {
-  width: auto;
+word:active {
+  color: red;
 }
 word:focus {
-  width: 100vw;
   height: 27px;
   color: darkcyan;
 }
-word:focus left {
+word:focus part {
+  width: auto;
+  color: slateblue;
+}
+word:focus part {
   color: slateblue;
   background: aquamarine;
   border: 1px solid;
@@ -325,12 +323,10 @@ word:focus left {
   border-right: none;
   z-index: 3;
 }
-word:focus left part {
-  color: slateblue;
-}
 word:focus right {
+  height: unset;
   color: slateblue;
-  background: aquamarine;
+  background: aquamarine !important;
   z-index: 2;
   position: relative;
   left: -0.7px;
@@ -340,17 +336,9 @@ word:focus right {
   width: min-content;
   white-space: pre;
   text-indent: -0.6em;
-  /* text-overflow: ellipsis; */
-  /* width: 290px; */
-  /* word-wrap: break-word; */
-  /* word-break: break-word; */
-  /* display: flex; */
-  /* flex-wrap: wrap; */
-  /* flex-direction: row; */
-  /* height: 110px; */
-  /* overflow: hidden; */
+  padding: 3px 10px;
 }
-/* word:nth-of-type(even) {
+word:nth-of-type(even) {
   background-color: white;
 }
 word:nth-of-type(odd) {
@@ -361,17 +349,10 @@ word:nth-of-type(even) right {
 }
 word:nth-of-type(odd) right {
   background-color: #ddd;
-} */
-/* div word:hover * {
-  background-color: #6ab7e7;
 }
-word:hover right {
-  z-index: 3;
-} */
 
 * {
   box-sizing: border-box;
-  /* transition: all 1.5s; */
 }
 *:focus {
   outline: none;
