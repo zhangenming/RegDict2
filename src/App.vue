@@ -255,7 +255,7 @@ body {
 }
 .control {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   align-content: center;
   padding: 10px;
   gap: 10px;
@@ -269,6 +269,7 @@ input {
   border-radius: 10px;
   padding-left: 10px;
   border: 1px solid #aaa;
+  height: 200px;
 }
 input:focus {
   color: yellow;
@@ -297,7 +298,6 @@ group {
 word {
   display: flex;
   padding: 2px 0;
-  align-items: center;
 }
 group word:nth-of-type(odd) part {
   background-color: white#ddd;
