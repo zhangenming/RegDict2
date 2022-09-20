@@ -273,8 +273,8 @@ body {
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
   /* display: none; */
-  width: 1rem;
-  height: 2rem;
+  width: 0.4rem;
+  height: 0.2rem;
 }
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
@@ -317,7 +317,7 @@ input:focus-visible {
 .word > div {
   width: fit-content;
 }
-group {
+group:not(:nth-last-of-type(1)) {
   display: block;
   margin-bottom: 3rem;
 }
@@ -326,22 +326,28 @@ word {
   align-items: center;
   padding: 2px 0;
 }
-group word:nth-of-type(odd) part {
+word:active {
+  color: red;
+}
+word:focus {
+  color: violet;
+}
+word:nth-of-type(odd) part {
   background-color: white#ddd;
 }
-group word:nth-of-type(even) part {
+word:nth-of-type(even) part {
   background-color: #ddd;
 }
-group word:nth-of-type(even) {
+word:nth-of-type(even) {
   background-color: #ddd;
 }
-div group word:hover * {
+div word:hover * {
   background-color: #6ab7e7;
 }
-group word left {
+word left {
   z-index: 2;
 }
-group word:hover right {
+word:hover right {
   z-index: 3;
 }
 left {
