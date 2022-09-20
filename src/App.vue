@@ -191,11 +191,12 @@ function getChinese(word: any) {
 }
 
 onMounted(() => {
-  document.getElementById('inputDom')?.focus()
+  const input = document.getElementById('inputDom')!
+  input.focus()
 
   if (location.hostname !== '127.0.0.1') {
     let hadFullscreen = false
-    document.onclick = () => {
+    input.onclick = () => {
       hadFullscreen || document.documentElement.requestFullscreen()
       hadFullscreen = true
     }
@@ -209,6 +210,8 @@ onMounted(() => {
       id="inputDom"
       autocomplete="off"
       :value="userInput"
+      type="url"
+      autocapitalize="off"
       @input="userInput = ($event as any).target.value"
     />
     <span>{{ resultsLen }}</span>
@@ -246,9 +249,6 @@ onMounted(() => {
 </template>
 
 <style>
-::-webkit-scrollbar {
-  /* display: none; */
-}
 body {
   margin: 0;
   font-size: 20px;
@@ -272,32 +272,22 @@ body {
 
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
+  /* display: none; */
   width: 2px;
 }
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.3);
   border-radius: 10px;
+  background: red;
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.5);
+  background: aquamarine;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: #999;
+  background: #000;
 }
-::-webkit-scrollbar-thumb {
-  /*滚动条里面小方块*/
-
-  border-radius: 5px;
-
-  -webkit-box-shadow: inset005pxrgba(0, 0, 0, 0.2);
-
-  background: rgba(0, 0, 0, 0.2); /*设置滚动条颜色*/
-}
-
 input {
   width: 100%;
   box-sizing: border-box;
