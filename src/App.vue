@@ -192,7 +192,14 @@ function getChinese(word: any) {
 
 onMounted(() => {
   inputDom.focus()
+  setTimeout(() => {
+    document.documentElement.requestFullscreen()
+  }, 100)
 })
+
+document.onclick = () => {
+  document.documentElement.requestFullscreen()
+}
 </script>
 
 <template>
@@ -261,6 +268,35 @@ body {
   gap: 10px;
   background: #eee;
 }
+
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+  width: 2px;
+}
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: #999;
+}
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+
+  border-radius: 5px;
+
+  -webkit-box-shadow: inset005pxrgba(0, 0, 0, 0.2);
+
+  background: rgba(0, 0, 0, 0.2); /*设置滚动条颜色*/
+}
+
 input {
   width: 100%;
   box-sizing: border-box;
