@@ -191,15 +191,16 @@ function getChinese(word: any) {
 }
 
 onMounted(() => {
-  inputDom.focus()
-  setTimeout(() => {
-    document.documentElement.requestFullscreen()
-  }, 100)
-})
+  document.getElementById('inputDom')?.focus()
 
-document.onclick = () => {
-  document.documentElement.requestFullscreen()
-}
+  if (location.hostname !== '127.0.0.1') {
+    let hadFullscreen = false
+    document.onclick = () => {
+      hadFullscreen || document.documentElement.requestFullscreen()
+      hadFullscreen = true
+    }
+  }
+})
 </script>
 
 <template>
