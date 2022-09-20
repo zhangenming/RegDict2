@@ -216,7 +216,7 @@ onMounted(() => {
     />
     <span>{{ resultsLen }}</span>
   </div>
-  <div class="word">
+  <div class="container">
     <div>
       <template v-for="(group, type) in results">
         <group v-if="group.length">
@@ -246,17 +246,10 @@ onMounted(() => {
         </group>
       </template>
     </div>
-    <button>1</button>
-    <button>1</button>
-    <button>1</button>
   </div>
 </template>
 
 <style>
-button:focus {
-  background: olive;
-}
-
 body {
   margin: 0;
   font-size: 20px;
@@ -297,7 +290,7 @@ input:focus-visible {
   outline-offset: 0px;
   outline: none;
 }
-.word {
+.container {
   width: 100%;
   overflow-x: auto;
   flex-grow: 1;
@@ -305,7 +298,7 @@ input:focus-visible {
   padding: 10px;
   box-sizing: border-box;
 }
-.word > div {
+.container > div {
   width: fit-content;
 }
 group:not(:nth-last-of-type(1)) {
@@ -316,6 +309,7 @@ word {
   display: flex;
   align-items: center;
   padding: 2px 0;
+  height: 27px;
 }
 word:active {
   color: red;
@@ -331,7 +325,7 @@ word:focus {
 }
 word:focus left {
   background: aquamarine;
-  border: 1px solid;
+  /* border: 1px solid; */
   border-right: none;
   z-index: 3;
 }
@@ -376,6 +370,7 @@ left {
   width: 200px;
   flex-shrink: 0;
   padding: 0 10px;
+  height: 27px;
 }
 
 right {
