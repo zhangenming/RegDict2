@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
-const userInput = ref('end') // with end
+const userInput = ref('miss') // with end
 console.clear()
 
 let wordsArr: string[] = []
@@ -18,7 +18,7 @@ const inputClean = computed(() =>
   userInput.value.replaceAll(/[*.!?+-/=']/g, '').toLowerCase()
 )
 
-const rightPos = ref('500px')
+const rightPos = ref('1000px')
 const results = computed(() => {
   nextTick(() => {
     const dom = document.querySelector('word')
@@ -56,16 +56,16 @@ const results = computed(() => {
       ? [
           [
             {
-              word: word.slice(0, idx),
+              part: word.slice(0, idx),
             },
             {
-              word: word.slice(idx, idx + 1),
+              part: word.slice(idx, idx + 1),
               color: true,
             },
             {
-              word: word.slice(idx + 1),
+              part: word.slice(idx + 1),
             },
-          ].filter(e => e.word.length),
+          ].filter(e => e.part.length),
         ]
       : []
   })
@@ -81,20 +81,20 @@ const results = computed(() => {
           ? [
               [
                 {
-                  word: l,
+                  part: l,
                 },
                 {
-                  word: alphabet,
+                  part: alphabet,
                   color: true,
                 },
                 {
-                  word: r,
+                  part: r,
                 },
-              ].filter(e => e.word.length),
+              ].filter(e => e.part.length),
             ]
           : []
       })
-    })
+    }).ll
 
   const 少 = [
     ...new Set(
@@ -115,7 +115,7 @@ const results = computed(() => {
   // const lens = dataV.filter((e) => e.length === userInputV.length)
 
   const R: any = {
-    best: [
+    base: [
       ...mid.filter(e => e === inputCleanV),
       ...start.filter(e => e.length === inputCleanV.length + 1),
       ...end.filter(e => e.length === inputCleanV.length + 1),
@@ -123,7 +123,7 @@ const results = computed(() => {
     start,
     end,
     mid,
-    // 多,
+    多,
     少,
     顺序,
     替换,
@@ -135,7 +135,7 @@ const results = computed(() => {
     R[key] = group.flatMap((word: any) => {
       const isO = typeof word === 'object'
       // 重复
-      const key = isO ? word.map((e: any) => e.word).join('') : word
+      const key = isO ? word.map((e: any) => e.part).join('') : word
       if (repeat[key]) {
         return []
       }
@@ -288,10 +288,18 @@ word {
   align-content: center;
   position: relative;
   padding-right: 500px;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 part {
   height: 100%;
+  display: flex;
+  align-items: center;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 right {
   display: flex;
@@ -302,6 +310,9 @@ right {
   transition: left 0.3s;
   padding-left: 20px;
   height: inherit;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 word:active {
@@ -338,16 +349,16 @@ word:focus right {
   text-indent: -0.6em;
   padding: 3px 10px;
 }
-word:nth-of-type(even) {
+word:nth-of-type(odd) {
   background-color: white;
 }
-word:nth-of-type(odd) {
+word:nth-of-type(even) {
   background-color: #ddd;
 }
-word:nth-of-type(even) right {
+word:nth-of-type(odd) right {
   background-color: white;
 }
-word:nth-of-type(odd) right {
+word:nth-of-type(even) right {
   background-color: #ddd;
 }
 
