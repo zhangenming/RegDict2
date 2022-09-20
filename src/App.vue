@@ -255,7 +255,7 @@ body {
 }
 .control {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   align-content: center;
   padding: 10px;
   gap: 10px;
@@ -268,8 +268,6 @@ input {
   font-size: 35px;
   border-radius: 10px;
   padding-left: 10px;
-  display: flex;
-  align-items: center;
   border: 1px solid #aaa;
 }
 input:focus {
@@ -299,7 +297,6 @@ group {
 word {
   display: flex;
   padding: 2px 0;
-  display: flex;
   align-items: center;
 }
 group word:nth-of-type(odd) part {
@@ -316,8 +313,6 @@ div group word:hover * {
 }
 group word left {
   z-index: 2;
-  display: flex;
-  align-items: center;
 }
 group word:hover right {
   z-index: 3;
