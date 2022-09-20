@@ -268,8 +268,8 @@ input {
   font-size: 35px;
   border-radius: 10px;
   padding-left: 10px;
+  padding-bottom: 5px;
   border: 1px solid #aaa;
-  height: 200px;
 }
 input:focus {
   color: yellow;
@@ -297,6 +297,7 @@ group {
 }
 word {
   display: flex;
+  align-items: center;
   padding: 2px 0;
 }
 group word:nth-of-type(odd) part {
