@@ -8,6 +8,7 @@ let wordsArr: string[] = []
 fetch('./WORDS.json')
   .then(res => res.json())
   .then(res => {
+    ;(window as any).temp1 = res
     res.__proto__ = Object.create(null) // avoid debuger
     wordsObj.value = res
     wordsArr = Object.keys(res)
@@ -94,7 +95,7 @@ const results = computed(() => {
             ]
           : []
       })
-    }).ll
+    })
 
   const 少 = [
     ...new Set(
@@ -105,14 +106,11 @@ const results = computed(() => {
     ),
   ]
 
-  // 拆分
-  // const cf = Array.from({ length: inputCleanV.length }, (_, i) => {
+  // const 拆分 = Array.from({ length: inputCleanV.length }, (_, i) => {
   //   const tmp = [...inputCleanV]
   //   tmp.splice(i, 1)
   //   return tmp.join('')
   // }).filter(e => dataV.includes(e))
-
-  // const lens = dataV.filter((e) => e.length === userInputV.length)
 
   const R: any = {
     base: [
@@ -174,12 +172,7 @@ function getChinese(word: any) {
     return all
   }, '')
 
-  return wordsObj.value[china].replace(
-    /\\u[\dA-Fa-f]{4}/g,
-    function (match: any) {
-      return String.fromCharCode(parseInt(match.replace(/\\u/, ''), 16))
-    }
-  )
+  return wordsObj.value[china]
 }
 
 onMounted(() => {
@@ -288,18 +281,12 @@ word {
   align-content: center;
   position: relative;
   padding-right: 500px;
-  display: flex;
-  align-items: center;
-  align-content: center;
 }
 
 part {
   height: 100%;
   display: flex;
   align-items: center;
-  display: flex;
-  align-items: center;
-  align-content: center;
 }
 right {
   display: flex;
@@ -310,9 +297,6 @@ right {
   transition: left 0.3s;
   padding-left: 20px;
   height: inherit;
-  display: flex;
-  align-items: center;
-  align-content: center;
 }
 
 word:active {
@@ -340,7 +324,7 @@ word:focus right {
   background: aquamarine !important;
   z-index: 2;
   position: relative;
-  left: -0.7px;
+  left: -0.8px;
   border: 1px solid;
   border-radius: 0 10px 10px 0;
   white-space: inherit;
@@ -376,7 +360,7 @@ word:nth-of-type(even) right {
 }
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
-  background: red;
+  background: blanchedalmond;
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
