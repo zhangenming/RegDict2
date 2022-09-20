@@ -225,6 +225,7 @@ onMounted(() => {
             v-for="word in group
           .slice(0, 20)
           .map((e:any) => (Array.isArray(e) ? e : [e]))"
+            tabIndex="1"
           >
             <left>
               <template v-for="part in word">
@@ -245,10 +246,17 @@ onMounted(() => {
         </group>
       </template>
     </div>
+    <button>1</button>
+    <button>1</button>
+    <button>1</button>
   </div>
 </template>
 
 <style>
+button:focus {
+  background: olive;
+}
+
 body {
   margin: 0;
   font-size: 20px;
@@ -330,7 +338,28 @@ word:active {
   color: red;
 }
 word:focus {
-  color: violet;
+  width: 100vw;
+}
+word:focus left {
+  width: auto;
+}
+word:focus right {
+  color: darkcyan;
+  white-space: inherit;
+  width: min-content;
+
+  white-space: pre;
+  text-indent: -0.6rem;
+  /* text-overflow: ellipsis; */
+  /* width: 290px; */
+  flex-grow: 1;
+  /* word-wrap: break-word; */
+  /* word-break: break-word; */
+  /* display: flex; */
+  /* flex-wrap: wrap; */
+  /* flex-direction: row; */
+  /* height: 110px; */
+  /* overflow: hidden; */
 }
 word:nth-of-type(odd) part {
   background-color: white#ddd;
@@ -344,16 +373,14 @@ word:nth-of-type(even) {
 div word:hover * {
   background-color: #6ab7e7;
 }
-word left {
+left {
   z-index: 2;
+  width: 200px;
+  flex-shrink: 0;
+  padding: 0 10px;
 }
 word:hover right {
   z-index: 3;
-}
-left {
-  width: 200px;
-  flex-shrink: 0;
-  padding-left: 10px;
 }
 right {
   white-space: nowrap;
