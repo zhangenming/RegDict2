@@ -278,23 +278,6 @@ body {
   background: #eee;
 }
 
-/* 设置滚动条的样式 */
-::-webkit-scrollbar {
-  /* display: none; */
-  width: 0.4rem;
-  height: 0.2rem;
-}
-/* 滚动槽 */
-::-webkit-scrollbar-track {
-  background: red;
-}
-/* 滚动条滑块 */
-::-webkit-scrollbar-thumb {
-  background: aquamarine;
-}
-/* ::-webkit-scrollbar-thumb:window-inactive {
-  background: #000;
-} */
 input {
   width: 100%;
   box-sizing: border-box;
@@ -347,6 +330,7 @@ word:focus left part {
   background: aquamarine;
 }
 word:focus right {
+  z-index: 2;
   color: darkcyan;
   background: aquamarine;
   border: 1px solid;
@@ -398,4 +382,28 @@ right {
   white-space: nowrap;
   padding-right: 10px;
 }
+
+* {
+  box-sizing: border-box;
+}
+*:focus {
+  outline: none;
+}
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+  /* display: none; */
+  width: 0.4rem;
+  height: 0.2rem;
+}
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  background: red;
+}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background: aquamarine;
+}
+/* ::-webkit-scrollbar-thumb:window-inactive {
+  background: #000;
+} */
 </style>
