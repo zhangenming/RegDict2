@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
-const userInput = ref('miss') // with end
+const userInput = ref('chemistry') // with end ate iferous
 console.clear()
 
 let wordsArr: string[] = []
 fetch('./WORDS.json')
   .then(res => res.json())
   .then(res => {
-    ;(window as any).temp1 = res
     res.__proto__ = Object.create(null) // avoid debuger
-    wordsObj.value = res
-    wordsArr = Object.keys(res)
+    wordsObj.value = (window as any).temp1 = res
+    wordsArr = (window as any).temp2 = Object.keys(res)
   })
 
 const wordsObj = shallowRef<any>({})
@@ -30,7 +29,6 @@ const results = computed(() => {
   const inputCleanV = inputClean.value
   if (!inputCleanV) return []
 
-  console.time('computed')
   const wordsObjV = wordsObj.value
 
   const mid = wordsArr.filter(e => e.includes(inputCleanV))
@@ -144,7 +142,6 @@ const results = computed(() => {
 
     if (!R[key].length) delete R[key]
   }
-  console.timeEnd('computed')
   return R
 
   function doColor(word: string) {
@@ -205,7 +202,7 @@ onMounted(() => {
     <div>
       <group v-for="(group, type) in results.ll">
         <span>{{ type }}({{ group.length }})</span>
-        <word v-for="word in group.slice(0, 10)" tabIndex="1">
+        <word v-for="word in group.slice(0, 50)" tabIndex="1">
           <part v-for="part in word" :class="{ 'text-red-500': part.color }">
             {{ part.part }}
           </part>
@@ -221,7 +218,7 @@ body {
   margin: 0;
   font-size: 20px;
   font-family: fangsong, serif, monospace;
-  background: blanchedalmond;
+  background: #eee;
 }
 #app {
   height: 100vh;
@@ -265,6 +262,8 @@ input:focus-visible {
   border-top: 0.5px solid #aaa;
   padding: 10px;
   box-sizing: border-box;
+  border-radius: 25px 25px 0 0;
+  background: blanchedalmond;
 }
 .container > div {
   width: fit-content;
@@ -360,11 +359,11 @@ word:nth-of-type(even) right {
 }
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
-  background: blanchedalmond;
+  background: #eee;
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
-  background: aquamarine;
+  background: #6ab7e7;
 }
 /* ::-webkit-scrollbar-thumb:window-inactive {
   background: #000;

@@ -1,16 +1,134 @@
-# Vue 3 + TypeScript + Vite
+单字母词频
+    ['q', 1441],
+    ['j', 1504],
+    ['x', 2722],
+    ['z', 3556],
+    ['w', 5955],
+    ['k', 7066],
+    ['v', 7702],
+    ['f', 9988],
+    ['b', 15529],
+    ['y', 16718],
+    ['g', 17951],
+    ['h', 22678],
+    ['d', 24196],
+    ['p', 25564],
+    ['m', 26271],
+    ['u', 27945],
+    ['c', 36935],
+    ['l', 43401],
+    ['s', 44948],
+    ['n', 52468],
+    ['t', 55872],
+    ['r', 57991],
+    ['o', 59304],
+    ['i', 69156],
+    ['a', 71460],
+    ['e', 83986],
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-## Recommended IDE Setup
+单字母词频 词头
+    ['x', 171],
+    ['y', 357],
+    ['z', 451],
+    ['q', 485],
+    ['j', 881],
+    ['k', 1218],
+    ['v', 1594],
+    ['w', 1822],
+    ['n', 2337],
+    ['o', 2400],
+    ['u', 2832],
+    ['g', 3158],
+    ['l', 3273],
+    ['f', 3564],
+    ['i', 3719],
+    ['h', 4087],
+    ['e', 4206],
+    ['r', 4380],
+    ['b', 4795],
+    ['t', 4975],
+    ['d', 5135],
+    ['m', 5340],
+    ['a', 6683],
+    ['p', 7901],
+    ['c', 8891],
+    ['s', 9720],
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+// 双字母词频
+const x =2
+const R = {}
+Object.keys(temp1).forEach(word=>{
+    if(word.length < x-1) return
+    const res = Array.from(Array(word.length + 1 - x), (_,i)=>word.slice(i,i+x))
+    res.forEach(r=>{
+        if(!R[r]) R[r] = 0
+        R[r]++
+    })
+})
+Object.entries(R).sort((q,w)=>w[1]-q[1]).slice(0,100)
+console.log(26**x, Object.entries(R).sort((q,w)=>w[1]-q[1]).length)
 
-## Type Support For `.vue` Imports in TS
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+
+
+// 以头/尾x位为分割 排序
+const x = 3
+Object.entries(temp2.map(e=>e.slice(0,x)).reduce((all, now)=>{
+    if(!all[now]) all[now] = 0
+    all[now]++
+    return all
+},{})).sort((q,w)=>w[1]-q[1]).slice(0,100)
+
+
+元音最多 aerobacteriological
+
+
+最短不存在
+cx
+
+不同字母最多 15
+encephalomyocarditis
+
+重复字母最多 12
+microspectrophotometer
+
+单词长度最长 24
+diphenylaminechlorarsine
+
+最长单字母连续重复  /(\w)(\1)+/
+brrr
+最长单字母不连续重复  /.*(\w).*(.*\1.*){5+}/
+taramasalata 
+最长多字母连续重复
+ahuehuete
+最长多字母不连续重复
+hemidemisemiquaver
+
+
+最长循环节
+huggermugger
+
+最多循环节  
+dirigibility
+berserker
+amendment
+
+最长回文 word.match(/(.)(.)(.)(.).*\4\3\2\1/) || ['']
+levitative
+最长纯粹回文
+succus
+最长纯粹回文2
+reifier
+
+
+含相同字母最多 abracadabra (a5)
+temp2.map(word=>[Object.entries([...word].reduce((all,now,i,word)=>{
+    window.s=word
+    if(!all[now]) all[now]=0
+    all[now]++
+    return all
+},{})).sort((q,w)=>w[0][1]-q[0][1])[0], word])
+.sort((q,w)=>w[0][1]-q[0][1])
