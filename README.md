@@ -1,3 +1,14 @@
+todo
+    横屏
+    词频树
+    随机丰富词语
+
+    chrome插件
+
+    http://www.iciba.com/word?w=xxx
+
+
+
 单字母词频
     ['q', 1441],
     ['j', 1504],
@@ -98,13 +109,16 @@ microspectrophotometer
 单词长度最长 24
 diphenylaminechlorarsine
 
-最长单字母连续重复  /(\w)(\1)+/
+最多单字母连续重复  /(\w)(\1)+/
 brrr
-最长单字母不连续重复  /.*(\w).*(.*\1.*){5+}/
-taramasalata 
-最长多字母连续重复
+最多相同多字母连续重复
+appellee 
+最多不同多字母连续重复
 ahuehuete
-最长多字母不连续重复
+
+最多单字母不连续重复  /.*(\w).*(.*\1.*){5+}/
+taramasalata 
+最多多字母不连续重复
 hemidemisemiquaver
 
 
@@ -132,3 +146,16 @@ temp2.map(word=>[Object.entries([...word].reduce((all,now,i,word)=>{
     return all
 },{})).sort((q,w)=>w[0][1]-q[0][1])[0], word])
 .sort((q,w)=>w[0][1]-q[0][1])
+
+
+
+
+https://raw.githubusercontent.com/Zhangtd/MorTransformation/master/dic.txt
+$0.innerText.split('\n').map(e=>{
+    const r = e.replaceAll('', ' ').split(' ')
+    return {[r[0]]: r.slice(1).join(' ')}
+}).reduce((all,now)=>{
+    const [k,v] = Object.entries(now)[0]
+    all[k] =  v
+    return all
+},{})

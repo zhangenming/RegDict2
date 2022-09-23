@@ -1,57 +1,62 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
-const userInput = ref('chemistry') // with end ate iferous
+const userInput = ref('all') // with end ate iferous
 console.clear()
 
-let wordsArr: string[] = []
-fetch('./WORDS.json')
+const loading = ref(false)
+const fetchData: { obj: any; arr: string[] } = {
+  obj: {},
+  arr: [],
+}
+fetch('./max2.json')
+  // Object.entries(obj).filter(e=>!e[1].includes('地名')).reduce((all,[k,v])=>{
+  //     all[k]=v
+  //     return all
+  // },{})
   .then(res => res.json())
   .then(res => {
     res.__proto__ = Object.create(null) // avoid debuger
-    wordsObj.value = (window as any).temp1 = res
-    wordsArr = (window as any).temp2 = Object.keys(res)
+    fetchData.obj = (window as any).obj = res
+    fetchData.arr = (window as any).arr = Object.keys(res)
+    loading.value = true
   })
 
-const wordsObj = shallowRef<any>({})
-const inputClean = computed(() =>
-  userInput.value.replaceAll(/[*.!?+-/=']/g, '').toLowerCase()
-)
-
 const rightPos = ref('1000px')
+const cache: any = {}
 const results = computed(() => {
   nextTick(() => {
     const dom = document.querySelector('word')
-    if (!dom) return
-    rightPos.value = getComputedStyle(dom).width
+    if (dom) rightPos.value = getComputedStyle(dom).width
   })
 
-  const inputCleanV = inputClean.value
-  if (!inputCleanV) return []
+  const input = userInput.value
+  if (!loading.value || !input) return {}
+  if (cache[input]) return cache[input]
 
-  const wordsObjV = wordsObj.value
-
-  const mid = wordsArr.filter(e => e.includes(inputCleanV))
-  const start = mid.filter(e => e.startsWith(inputCleanV))
-  const end = mid.filter(e => e.endsWith(inputCleanV))
-  const dataWithLen = mid.filter(e => e.length === inputCleanV.length)
+  console.time('search ' + input)
+  const { arr, obj } = fetchData
+  const mid = arr.filter(e => e.includes(input))
+  const start = mid.filter(e => e.startsWith(input))
+  const end = mid.filter(e => e.endsWith(input))
+  const dataWithLen = arr.filter(e => e.length === input.length)
 
   // stroke
   // stoker
-  const 顺序 = dataWithLen
-    .filter(e => [...e].sort().join() === [...inputCleanV].sort().join())
-    .filter(e => e !== inputCleanV)
+  const 顺序 = dataWithLen.filter(
+    e => [...e].sort().join() === [...input].sort().join()
+  )
 
   const 替换 = dataWithLen.flatMap(word => {
     let n = 0
     let idx = 0
-    for (let i = 0; i < inputCleanV.length; i++) {
-      if (inputCleanV[i] !== word[i]) {
+    for (let i = 0; i < input.length; i++) {
+      if (input[i] !== word[i]) {
         n++
         idx = i
       }
     }
-    return n === 1 && inputCleanV.length > 1
+    return n === 1 && input.length > 1
       ? [
           [
             {
@@ -70,13 +75,13 @@ const results = computed(() => {
   })
 
   const alphabets = Array.from(Array(26), (_, i) => String.fromCharCode(97 + i))
-  const 多 = Array(inputCleanV.length + 1)
+  const 多 = Array(input.length + 1)
     .fill(0)
     .flatMap((_, i) => {
       return alphabets.flatMap(alphabet => {
-        const l = inputCleanV.slice(0, i)
-        const r = inputCleanV.slice(i)
-        return wordsObjV[l + alphabet + r]
+        const l = input.slice(0, i)
+        const r = input.slice(i)
+        return obj[l + alphabet + r]
           ? [
               [
                 {
@@ -97,9 +102,9 @@ const results = computed(() => {
 
   const 少 = [
     ...new Set(
-      [...inputCleanV].flatMap((_, i) => {
-        const target = inputCleanV.slice(0, i) + inputCleanV.slice(i + 1)
-        return wordsObjV[target] ? [target] : []
+      [...input].flatMap((_, i) => {
+        const target = input.slice(0, i) + input.slice(i + 1)
+        return obj[target] ? [target] : []
       })
     ),
   ]
@@ -110,25 +115,33 @@ const results = computed(() => {
   //   return tmp.join('')
   // }).filter(e => dataV.includes(e))
 
-  const R: any = {
-    base: [
-      ...mid.filter(e => e === inputCleanV),
-      ...start.filter(e => e.length === inputCleanV.length + 1),
-      ...end.filter(e => e.length === inputCleanV.length + 1),
-    ],
-    start,
-    end,
-    mid,
-    多,
-    少,
-    顺序,
-    替换,
-  }
+  const datas: any = (() => {
+    const base = [
+      ...mid.filter(e => e === input),
+      ...start.filter(e => e.length === input.length + 1),
+      ...end.filter(e => e.length === input.length + 1),
+    ]
+
+    if (input.length === 1) {
+      return { base }
+    }
+
+    return {
+      base,
+      start,
+      end,
+      mid,
+      顺序,
+      替换,
+      多,
+      少,
+    }
+  })()
 
   const repeat: any = {}
-  for (const key in R) {
-    const group = R[key]
-    R[key] = group.flatMap((word: any) => {
+  for (const key in datas) {
+    const group = datas[key]
+    datas[key] = group.flatMap((word: any) => {
       const isO = typeof word === 'object'
       // 重复
       const key = isO ? word.map((e: any) => e.part).join('') : word
@@ -140,23 +153,26 @@ const results = computed(() => {
       return isO ? [word] : [doColor(word)]
     })
 
-    if (!R[key].length) delete R[key]
+    if (!datas[key].length) delete datas[key]
   }
-  return R
+  console.timeEnd('search ' + input)
+
+  return (cache[input] = {
+    data: datas,
+    len: mid.length,
+    // len: Object.values(results.value).reduce(
+    //   (all, now: any) => all + now.length,
+    //   0
+    // ),
+  })
 
   function doColor(word: string) {
     return word
-      .replaceAll(inputClean.value, `-${inputClean.value}-`)
-      .split('-')
+      .replaceAll(input, `@${input}@`)
+      .split('@')
       .filter(e => e !== '')
-      .map(part => ({ part, color: part === inputCleanV }))
+      .map(part => ({ part, color: part === input }))
   }
-})
-const resultsLen = computed(() => {
-  return Object.values(results.value).reduce(
-    (all, now: any) => all + now.length,
-    0
-  )
 })
 
 function getChinese(word: any) {
@@ -169,20 +185,11 @@ function getChinese(word: any) {
     return all
   }, '')
 
-  return wordsObj.value[china]
+  return fetchData.obj[china]
 }
 
 onMounted(() => {
-  const input = document.getElementById('inputDom')!
-  input.focus()
-
-  if (location.hostname !== '127.0.0.1') {
-    let hadFullscreen = false
-    input.onclick = () => {
-      hadFullscreen || document.documentElement.requestFullscreen()
-      hadFullscreen = true
-    }
-  }
+  document.getElementById('inputDom')!.focus()
 })
 </script>
 
@@ -196,13 +203,13 @@ onMounted(() => {
       autocapitalize="off"
       @input="userInput = ($event as any).target.value"
     />
-    <span>{{ resultsLen }}</span>
+    <span>{{ results.len }}</span>
   </div>
   <div class="container">
     <div>
-      <group v-for="(group, type) in results.ll">
+      <group v-for="(group, type) in results.data">
         <span>{{ type }}({{ group.length }})</span>
-        <word v-for="word in group.slice(0, 50)" tabIndex="1">
+        <word v-for="word in group.slice(0, 20)" tabIndex="1">
           <part v-for="part in word" :class="{ 'text-red-500': part.color }">
             {{ part.part }}
           </part>
@@ -239,7 +246,7 @@ body {
 input {
   width: 100%;
   box-sizing: border-box;
-  background: aquamarine;
+  background: #6ab7e7;
   font-size: 35px;
   border-radius: 10px;
   padding-left: 10px;
@@ -247,9 +254,9 @@ input {
   border: 1px solid #aaa;
 }
 input:focus {
-  color: yellow;
-  background: #6ab7e7;
-  caret-color: yellow;
+  background: aquamarine;
+  color: red;
+  caret-color: red;
 }
 input:focus-visible {
   outline-offset: 0px;
@@ -286,6 +293,7 @@ part {
   height: 100%;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 right {
   display: flex;
@@ -353,10 +361,12 @@ word:nth-of-type(even) right {
 }
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
-  /* display: none; */
   width: 0.4rem;
   height: 0.2rem;
 }
+/* ::-webkit-scrollbar:window-inactive {
+  display: none;
+} */
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
   background: #eee;
@@ -365,7 +375,8 @@ word:nth-of-type(even) right {
 ::-webkit-scrollbar-thumb {
   background: #6ab7e7;
 }
-/* ::-webkit-scrollbar-thumb:window-inactive {
-  background: #000;
-} */
+/* 使用:has退回一级 才可匹配到 */
+:has(input:focus) ::-webkit-scrollbar-thumb {
+  background: aquamarine;
+}
 </style>

@@ -48,3 +48,10 @@ export function withTime(fn) {
   console.timeEnd()
   return r
 }
+
+
+window.diff = (l, r) => {
+  console.log(l.filter(e => !r.includes(e)))
+  console.log(l.filter(e => r.includes(e)))
+  console.log(r.filter(e => !l.includes(e)))
+}
