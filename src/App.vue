@@ -2,8 +2,6 @@
 import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
 const userInput = ref('all') // with end ate iferous
-const _input = computed(() => userInput.value.toLocaleLowerCase().trim())
-
 console.clear()
 
 const loading = ref(false)
@@ -32,7 +30,7 @@ const results = computed(() => {
     if (dom) rightPos.value = getComputedStyle(dom).width
   })
 
-  const input = _input.value
+  const input = userInput.value.toLocaleLowerCase().trim()
   if (!loading.value || !input) return {}
   if (cache[input]) return cache[input]
 
@@ -61,10 +59,17 @@ const results = computed(() => {
     return n === 1 && input.length > 1
       ? [
           [
-            word.slice(0, idx),
-            word.slice(idx, idx + 1),
-            word.slice(idx + 1),
-          ].filter(e => e.length),
+            {
+              part: word.slice(0, idx),
+            },
+            {
+              part: word.slice(idx, idx + 1),
+              color: true,
+            },
+            {
+              part: word.slice(idx + 1),
+            },
+          ].filter(e => e.part.length),
         ]
       : []
   })
@@ -77,7 +82,20 @@ const results = computed(() => {
         const l = input.slice(0, i)
         const r = input.slice(i)
         return obj[l + alphabet + r]
-          ? [[l, alphabet, r].filter(e => e.length)]
+          ? [
+              [
+                {
+                  part: l,
+                },
+                {
+                  part: alphabet,
+                  color: true,
+                },
+                {
+                  part: r,
+                },
+              ].filter(e => e.part.length),
+            ]
           : []
       })
     })
@@ -153,16 +171,13 @@ const results = computed(() => {
       .replaceAll(input, `@${input}@`)
       .split('@')
       .filter(e => e !== '')
+      .map(part => ({ part, color: part === input }))
   }
 })
 
 function getChinese(word: any) {
   const china = word.reduce((all: string, now: any) => {
-    if (typeof now === 'string') {
-      all += now
-    } else {
-      all += now.part
-    }
+    all += now.part
     return all
   }, '')
 
@@ -191,11 +206,8 @@ onMounted(() => {
       <group v-for="(group, type) in results.data">
         <span>{{ type }}({{ group.length }})</span>
         <word v-for="word in group.slice(0, 20)" tabIndex="1">
-          <part
-            v-for="part in word"
-            :class="{ 'text-red-500': part === _input }"
-          >
-            {{ part }}
+          <part v-for="part in word" :class="{ 'text-red-500': part.color }">
+            {{ part.part }}
           </part>
           <right>{{ getChinese(word) }}</right>
         </word>
