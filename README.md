@@ -1,4 +1,5 @@
 todo
+  semiconduct
     横屏
     词频树
     随机丰富词语
