@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
-const userInput = ref('all') // with end ate iferous
+const userInput = ref('react') // with end ate iferous
 console.clear()
 
 const loading = ref(false)
@@ -18,7 +18,8 @@ fetch(location.host === 'zem-word.netlify.app' ? 'WORDS.json' : './max2.json')
   .then(res => {
     res.__proto__ = Object.create(null) // avoid debuger
     fetchData.obj = (window as any).obj = res
-    fetchData.arr = (window as any).arr = Object.keys(res)
+    fetchData.arr = (window as any).arr = Object.keys(res) // 100+ms 考虑通过网络?
+    // withTime(() => Object.keys(res))
     loading.value = true
   })
 
@@ -43,9 +44,69 @@ const results = computed(() => {
 
   // stroke
   // stoker
-  const 顺序 = dataWithLen.filter(
-    e => [...e].sort().join() === [...input].sort().join()
-  )
+  const 顺序 = [...input]
+    .reduce((all, now) => {
+      return all.filter(word => word.includes(now))
+    }, dataWithLen)
+    .filter(e => [...e].sort().join() === [...input].sort().join())
+
+  const put = [...input].sort().join()
+
+  withTime(() => {
+    arr.filter(e => f3(f2(f1(e))) === put).ll
+  })
+
+  // withTime(() => {
+  //   arr.filter(e => f3(f2(f11(e))) === put).ll
+  // })
+
+  function f1(x) {
+    return [...x]
+  }
+  function f11(x) {
+    return x.split('')
+  }
+  function f2(x) {
+    return x.sort()
+  }
+  function f3(x) {
+    return x + ''
+  }
+
+  // withTime(() => {
+  //   const t = [...input]
+  //   const 顺序 = dataWithLen.filter(
+  //     word =>
+  //       t.every(w => word.includes(w)) &&
+  //       [...word].every(w => input.includes(w))
+  //   ).ll
+  // })
+
+  // 12ms
+  // withTime(() => {
+  //   arr
+  //     .filter(word => word.length === input.length)
+  //     .filter(word => [...word].every(w => input.includes(w)))
+  //     .filter(word => [...input].every(w => word.includes(w)))
+  // })
+
+  // // 18ms 为什么这种写法性能反而降低了??  不该多少提升一点么
+  // withTime(() => {
+  //   arr.filter(
+  //     word =>
+  //       word.length === input.length &&
+  //       word.split('').every(w => input.includes(w)) &&
+  //       [...input].every(w => word.includes(w))
+  //   )
+  // })
+
+  // withTime(() => {
+  //   const 顺序 = [...input]
+  //     .reduce((all, now) => {
+  //       return all.filter(word => word.includes(now))
+  //     }, dataWithLen)
+  //     .filter(e => [...e].sort().join() === [...input].sort().join()).ll
+  // })
 
   const 替换 = dataWithLen.flatMap(word => {
     let n = 0
@@ -58,18 +119,21 @@ const results = computed(() => {
     }
     return n === 1 && input.length > 1
       ? [
-          [
-            {
-              part: word.slice(0, idx),
-            },
-            {
-              part: word.slice(idx, idx + 1),
-              color: true,
-            },
-            {
-              part: word.slice(idx + 1),
-            },
-          ].filter(e => e.part.length),
+          {
+            china: fetchData.obj[input],
+            parts: [
+              {
+                part: word.slice(0, idx),
+              },
+              {
+                part: word.slice(idx, idx + 1),
+                color: true,
+              },
+              {
+                part: word.slice(idx + 1),
+              },
+            ].filter(e => e.part.length),
+          },
         ]
       : []
   })
@@ -83,18 +147,21 @@ const results = computed(() => {
         const r = input.slice(i)
         return obj[l + alphabet + r]
           ? [
-              [
-                {
-                  part: l,
-                },
-                {
-                  part: alphabet,
-                  color: true,
-                },
-                {
-                  part: r,
-                },
-              ].filter(e => e.part.length),
+              {
+                china: fetchData.obj[input],
+                parts: [
+                  {
+                    part: l,
+                  },
+                  {
+                    part: alphabet,
+                    color: true,
+                  },
+                  {
+                    part: r,
+                  },
+                ].filter(e => e.part.length),
+              },
             ]
           : []
       })
@@ -142,15 +209,21 @@ const results = computed(() => {
   for (const key in datas) {
     const group = datas[key]
     datas[key] = group.flatMap((word: any) => {
-      const isO = typeof word === 'object'
-      // 重复
-      const key = isO ? word.map((e: any) => e.part).join('') : word
-      if (repeat[key]) {
+      const isStr = typeof word === 'string'
+      const english = isStr ? word : word.china
+      if (repeat[english]) {
         return []
       }
 
-      repeat[key] = true
-      return isO ? [word] : [doColor(word)]
+      repeat[english] = true
+      return isStr
+        ? [
+            {
+              china: fetchData.obj[english],
+              parts: doColor(word),
+            },
+          ]
+        : [word]
     })
 
     if (!datas[key].length) delete datas[key]
@@ -175,15 +248,6 @@ const results = computed(() => {
   }
 })
 
-function getChinese(word: any) {
-  const china = word.reduce((all: string, now: any) => {
-    all += now.part
-    return all
-  }, '')
-
-  return fetchData.obj[china]
-}
-
 onMounted(() => {
   document.getElementById('inputDom')!.focus()
 })
@@ -206,10 +270,13 @@ onMounted(() => {
       <group v-for="(group, type) in results.data">
         <span>{{ type }}({{ group.length }})</span>
         <word v-for="word in group.slice(0, 20)" tabIndex="1">
-          <part v-for="part in word" :class="{ 'text-red-500': part.color }">
+          <part
+            v-for="part in word.parts"
+            :class="{ 'text-red-500': part.color }"
+          >
             {{ part.part }}
           </part>
-          <right>{{ getChinese(word) }}</right>
+          <right>{{ word.china }}</right>
         </word>
       </group>
     </div>

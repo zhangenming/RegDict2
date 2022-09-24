@@ -42,10 +42,13 @@ Object.defineProperties(Object.prototype, {
   },
 })
 
+window.withTime = withTime
 export function withTime(fn) {
+  const d = Date.now()
   console.time()
   const r = fn()
   console.timeEnd()
+  document.title = Date.now() - d
   return r
 }
 
