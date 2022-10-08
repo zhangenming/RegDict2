@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
-const userInput = ref('react') // with end ate iferous
+const userInput = ref('layout') // with end ate iferous //ntrin
 console.clear()
 
 const loading = ref(false)
@@ -32,82 +32,56 @@ const results = computed(() => {
   })
 
   const input = userInput.value.toLocaleLowerCase().trim()
+  const inputSpread = [...input]
   if (!loading.value || !input) return {}
   if (cache[input]) return cache[input]
 
   console.time('search ' + input)
   const { arr, obj } = fetchData
+  const dataWithLen = arr.filter(e => e.length === input.length)
   const mid = arr.filter(e => e.includes(input))
   const start = mid.filter(e => e.startsWith(input))
   const end = mid.filter(e => e.endsWith(input))
-  const dataWithLen = arr.filter(e => e.length === input.length)
 
   // stroke
   // stoker
-  const 顺序 = [...input]
-    .reduce((all, now) => {
-      return all.filter(word => word.includes(now))
-    }, dataWithLen)
-    .filter(e => [...e].sort().join() === [...input].sort().join())
+  const 顺序 = dataWithLen
+    .filter(word => inputSpread.every(w => word.includes(w)))
+    .filter(word => [...word].sort() + '' === [...input].sort() + '')
 
-  const put = [...input].sort().join()
-
-  withTime(() => {
-    arr.filter(e => f3(f2(f1(e))) === put).ll
-  })
+  // const __顺序2 = Array.from(
+  //   Array(input.length - 1),
+  //   (_, i) => input.slice(i + 1) + input.slice(0, i + 1)
+  // ).ll
+  // const 顺序2 = dataWithLen.filter(word => __顺序2.includes(word)).ll
 
   // withTime(() => {
-  //   arr.filter(e => f3(f2(f11(e))) === put).ll
-  // })
+  //   const sortMap2: any = {}
+  //   dataWithLen
+  //     .flatMap(input_ => {
+  //       const inputSpread = [...input_]
+  //       const inputSpreadSort = [...inputSpread].sort() + ''
 
-  function f1(x) {
-    return [...x]
-  }
-  function f11(x) {
-    return x.split('')
-  }
-  function f2(x) {
-    return x.sort()
-  }
-  function f3(x) {
-    return x + ''
-  }
+  //       const 顺序SuperArr = Array.from(
+  //         Array(input_.length - 3),
+  //         (_, i) => input_.slice(i + 2) + input_.slice(0, i + 2)
+  //       )
+  //       const 顺序 = dataWithLen
+  //         // .filter(word => inputSpread.every(w => word.includes(w)))
+  //         .filter(word => {
+  //           if (!sortMap2[word]) sortMap2[word] = [...word].sort() + ''
+  //           return sortMap2[word] === inputSpreadSort
+  //         })
+  //         .filter(word => word != input_)
+  //         .filter(word => 顺序SuperArr.includes(word))
 
-  // withTime(() => {
-  //   const t = [...input]
-  //   const 顺序 = dataWithLen.filter(
-  //     word =>
-  //       t.every(w => word.includes(w)) &&
-  //       [...word].every(w => input.includes(w))
-  //   ).ll
-  // })
-
-  // 12ms
-  // withTime(() => {
-  //   arr
-  //     .filter(word => word.length === input.length)
-  //     .filter(word => [...word].every(w => input.includes(w)))
-  //     .filter(word => [...input].every(w => word.includes(w)))
-  // })
-
-  // // 18ms 为什么这种写法性能反而降低了??  不该多少提升一点么
-  // withTime(() => {
-  //   arr.filter(
-  //     word =>
-  //       word.length === input.length &&
-  //       word.split('').every(w => input.includes(w)) &&
-  //       [...input].every(w => word.includes(w))
-  //   )
-  // })
-
-  // withTime(() => {
-  //   const 顺序 = [...input]
+  //       return 顺序.length ? [{ [input_]: 顺序 }] : []
+  //     })
   //     .reduce((all, now) => {
-  //       return all.filter(word => word.includes(now))
-  //     }, dataWithLen)
-  //     .filter(e => [...e].sort().join() === [...input].sort().join()).ll
+  //       all[Object.keys(now)] = Object.values(now)[0]
+  //       return all
+  //     }, {}).ll
   // })
-
   const 替换 = dataWithLen.flatMap(word => {
     let n = 0
     let idx = 0
@@ -120,7 +94,7 @@ const results = computed(() => {
     return n === 1 && input.length > 1
       ? [
           {
-            china: fetchData.obj[input],
+            china: fetchData.obj[word],
             parts: [
               {
                 part: word.slice(0, idx),
@@ -145,10 +119,11 @@ const results = computed(() => {
       return alphabets.flatMap(alphabet => {
         const l = input.slice(0, i)
         const r = input.slice(i)
-        return obj[l + alphabet + r]
+        const targetWord = l + alphabet + r
+        return obj[targetWord]
           ? [
               {
-                china: fetchData.obj[input],
+                china: fetchData.obj[targetWord],
                 parts: [
                   {
                     part: l,
@@ -169,7 +144,7 @@ const results = computed(() => {
 
   const 少 = [
     ...new Set(
-      [...input].flatMap((_, i) => {
+      inputSpread.flatMap((_, i) => {
         const target = input.slice(0, i) + input.slice(i + 1)
         return obj[target] ? [target] : []
       })
@@ -203,6 +178,7 @@ const results = computed(() => {
       多,
       少,
     }
+    // 能不能分步返回 谁先完成就render谁
   })()
 
   const repeat: any = {}
@@ -267,7 +243,7 @@ onMounted(() => {
   </div>
   <div class="container">
     <div>
-      <group v-for="(group, type) in results.data">
+      <group v-for="(group, type) in results.data?.ll">
         <span>{{ type }}({{ group.length }})</span>
         <word v-for="word in group.slice(0, 20)" tabIndex="1">
           <part
