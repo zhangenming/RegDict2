@@ -2,6 +2,7 @@ const getT = () => performance.now()
 const origins = getT()
 let old = 0
 
+// eslint-disable-next-line no-extend-native
 Object.defineProperties(Object.prototype, {
   map: {
     value(cb: Function) {
@@ -54,7 +55,8 @@ Object.defineProperties(Object.prototype, {
 })
 ;(window as any).withTime = withTime
 export function withTime(...fns: Function[]) {
-  if (!fns[0]) return
+  if (!fns[0])
+    return
 
   const idx = Number(location.hash.slice(1))
   if (idx) {
@@ -64,17 +66,18 @@ export function withTime(...fns: Function[]) {
       ;(fns[idx - 1] || fns[0])()
 
       console.timeEnd()
-      document.title += Date.now() - d + '-'
+      document.title += `${Date.now() - d}-`
     }, 50)
-  } else {
+  }
+  else {
     fns.forEach((fn, i) => {
-      console.time(i + 1 + '')
+      console.time(`${i + 1}`)
       fn()
-      console.timeEnd(i + 1 + '')
+      console.timeEnd(`${i + 1}`)
     })
   }
 }
-;(window as any).diff = (l, r) => {
+(window as any).diff = (l, r) => {
   console.log(l.filter(e => !r.includes(e)))
   console.log(l.filter(e => r.includes(e)))
   console.log(r.filter(e => !l.includes(e)))

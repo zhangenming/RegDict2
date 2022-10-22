@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
+import { computed, nextTick, onMounted, ref, shallowRef } from 'vue'
 import { withTime } from './debug'
 console.clear()
 
@@ -17,8 +17,8 @@ fetch(location.host === 'zem-word.netlify.app' ? 'WORDS.json' : './max2.json')
   //     return all
   // },{})
   .then(res => res.json())
-  .then(res => {
-    res.__proto__ = Object.create(null) // avoid debuger
+  .then((res) => {
+    Object.setPrototypeOf(res, null) // avoid debuger
     fetchData.obj = (window as any).obj = res
     fetchData.arr = (window as any).arr = Object.keys(res) // 100+ms 考虑通过网络?
     loading.value = true
@@ -40,9 +40,10 @@ fetch(location.host === 'zem-word.netlify.app' ? 'WORDS.json' : './max2.json')
       () => {
         fetchData.arr.reduce((all, word) => {
           for (let w of word) {
-            //az->w
+            // az->w
             w = w.toLowerCase()
-            if (!all[w]) all[w] = []
+            if (!all[w])
+              all[w] = []
             all[w].push(word)
           }
           return all
@@ -50,11 +51,11 @@ fetch(location.host === 'zem-word.netlify.app' ? 'WORDS.json' : './max2.json')
       },
       () => {
         const all = {}
-        for (const az of 'abcdefghijklmnopqrstuvwxyz') {
+        for (const az of 'abcdefghijklmnopqrstuvwxyz')
           all[az] = fetchData.arr.filter(word => word.includes(az))
-        }
+
         all.ll
-      }
+      },
     )
   })
 
@@ -62,28 +63,30 @@ const rightPos = ref('1000px')
 const cache: any = {}
 
 function withCache<T>(fn: any, flag: any): T {
-  if (!(withCache as any)[fn + '']) {
-    ;(withCache as any)[fn + ''] = {}
-  }
-  const cache = (withCache as any)[fn + '']
+  if (!(withCache as any)[`${fn}`])
+    (withCache as any)[`${fn}`] = {}
 
-  if (!cache[flag]) {
+  const cache = (withCache as any)[`${fn}`]
+
+  if (!cache[flag])
     cache[flag] = fn()
-  }
+
   return cache[flag]
 }
 
 const results = computed(() => {
   nextTick(() => {
     const dom = document.querySelector('word')
-    if (dom) rightPos.value = getComputedStyle(dom).width
+    if (dom)
+      rightPos.value = getComputedStyle(dom).width
   })
 
   const input = userInput.value.toLocaleLowerCase().trim()
-  if (!loading.value || !input) return {}
+  if (!loading.value || !input)
+    return {}
   // if (cache[input]) return cache[input]
 
-  console.time('search ' + input)
+  console.time(`search ${input}`)
   const { arr, obj } = fetchData
   // const include2 = helper[input[0]].filter(e => e.includes(input))
   const include = arr.filter(e => e.includes(input))
@@ -99,7 +102,7 @@ const results = computed(() => {
   const end = include.filter(e => e.endsWith(input))
   const dataWithLen = withCache<string[]>(
     () => arr.filter(e => e.length === input.length),
-    input.length
+    input.length,
   )
 
   // stroke
@@ -107,7 +110,7 @@ const results = computed(() => {
   const inputSpread = [...input]
   const 顺序 = dataWithLen
     .filter(word => inputSpread.every(w => word.includes(w)))
-    .filter(word => [...word].sort() + '' === inputSpread.sort() + '')
+    .filter(word => `${[...word].sort()}` === `${inputSpread.sort()}`)
 
   // const newA = dataWithLen.map(e => ({ e, s: [...e].sort() + '' }))
 
@@ -161,7 +164,7 @@ const results = computed(() => {
   //       return all
   //     }, {}).ll
   // })
-  const 替换 = dataWithLen.flatMap(word => {
+  const 替换 = dataWithLen.flatMap((word) => {
     let n = 0
     let idx = 0
     for (let i = 0; i < input.length; i++) {
@@ -195,7 +198,7 @@ const results = computed(() => {
   const 多 = Array(input.length + 1)
     .fill(0)
     .flatMap((_, i) => {
-      return alphabets.flatMap(alphabet => {
+      return alphabets.flatMap((alphabet) => {
         const l = input.slice(0, i)
         const r = input.slice(i)
         const targetWord = l + alphabet + r
@@ -226,7 +229,7 @@ const results = computed(() => {
       inputSpread.flatMap((_, i) => {
         const target = input.slice(0, i) + input.slice(i + 1)
         return obj[target] ? [target] : []
-      })
+      }),
     ),
   ]
 
@@ -243,9 +246,8 @@ const results = computed(() => {
       ...end.filter(e => e.length === input.length + 1),
     ]
 
-    if (input.length === 1) {
+    if (input.length === 1)
       return { base }
-    }
 
     return {
       base,
@@ -266,9 +268,8 @@ const results = computed(() => {
     datas[key] = group.flatMap((word: any) => {
       const isStr = typeof word === 'string'
       const english = isStr ? word : word.china
-      if (repeat[english]) {
+      if (repeat[english])
         return []
-      }
 
       repeat[english] = true
       return isStr
@@ -281,9 +282,10 @@ const results = computed(() => {
         : [word]
     })
 
-    if (!datas[key].length) delete datas[key]
+    if (!datas[key].length)
+      delete datas[key]
   }
-  console.timeEnd('search ' + input)
+  console.timeEnd(`search ${input}`)
 
   return (cache[input] = {
     data: datas,
@@ -317,14 +319,14 @@ onMounted(() => {
       type="url"
       autocapitalize="off"
       @input="userInput = ($event as any).target.value"
-    />
+    >
     <span>{{ results.len }}</span>
   </div>
   <div class="container">
     <div>
       <group v-for="(group, type) in results.data?.ll">
         <span>{{ type }}({{ group.length }})</span>
-        <word v-for="word in group.slice(0, 20)" tabIndex="1">
+        <word v-for="word in group.slice(0, 20)" tab-index="1">
           <part
             v-for="part in word.parts"
             :class="{ 'text-red-500': part.color }"

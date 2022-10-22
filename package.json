@@ -1,18 +1,22 @@
 {
   "name": "english",
-  "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "vue": "^3.2.37"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.27.0",
     "@vitejs/plugin-vue": "^3.1.0",
+    "eslint": "^8.26.0",
     "typescript": "^4.6.4",
     "unocss": "^0.45.21",
     "vite": "^3.1.0",

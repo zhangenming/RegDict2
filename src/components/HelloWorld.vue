@@ -16,8 +16,8 @@ const value_change = ref('')
           value_input = e.target.value
         }
       "
-    />
-    <input v-model="value_input" />
+    >
+    <input v-model="value_input">
 
     <!-- change -->
     value_change: {{ value_change }}
@@ -28,7 +28,7 @@ const value_change = ref('')
           value_change = e.target.value
         }
       "
-    />
-    <input v-model="value_change" />
+    >
+    <input v-model="value_change">
   </div>
 </template>
