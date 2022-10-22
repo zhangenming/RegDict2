@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, onMounted, nextTick } from 'vue'
 import { withTime } from './debug'
-const userInput = ref('layout') // with end ate iferous //ntrin
 console.clear()
 
+const userInput = ref('with') // with end ate iferous layout//ntrin
 const loading = ref(false)
 const fetchData: { obj: any; arr: string[] } = {
   obj: {},
   arr: [],
 }
+let helper
+
 fetch(location.host === 'zem-word.netlify.app' ? 'WORDS.json' : './max2.json')
   // Object.entries(obj).filter(e=>!e[1].includes('地名')).reduce((all,[k,v])=>{
   //     all[k]=v
@@ -19,12 +21,58 @@ fetch(location.host === 'zem-word.netlify.app' ? 'WORDS.json' : './max2.json')
     res.__proto__ = Object.create(null) // avoid debuger
     fetchData.obj = (window as any).obj = res
     fetchData.arr = (window as any).arr = Object.keys(res) // 100+ms 考虑通过网络?
-    // withTime(() => Object.keys(res))
     loading.value = true
+
+    // setInterval(() => {
+    //   withTime(() => Object.keys(res))
+    // }, 1000)
+    // helper = fetchData.arr.reduce((all, word) => {
+    //   ;[...new Set(word)].forEach(e => {
+    //     e = e.toLowerCase()
+    //     if (!all[e]) all[e] = []
+    //     all[e].push(word)
+    //   })
+    //   return all
+    // }, {}).ll
+
+    withTime(
+      0,
+      () => {
+        fetchData.arr.reduce((all, word) => {
+          for (let w of word) {
+            //az->w
+            w = w.toLowerCase()
+            if (!all[w]) all[w] = []
+            all[w].push(word)
+          }
+          return all
+        }, {}).ll
+      },
+      () => {
+        const all = {}
+        for (const az of 'abcdefghijklmnopqrstuvwxyz') {
+          all[az] = fetchData.arr.filter(word => word.includes(az))
+        }
+        all.ll
+      }
+    )
   })
 
 const rightPos = ref('1000px')
 const cache: any = {}
+
+function withCache<T>(fn: any, flag: any): T {
+  if (!(withCache as any)[fn + '']) {
+    ;(withCache as any)[fn + ''] = {}
+  }
+  const cache = (withCache as any)[fn + '']
+
+  if (!cache[flag]) {
+    cache[flag] = fn()
+  }
+  return cache[flag]
+}
+
 const results = computed(() => {
   nextTick(() => {
     const dom = document.querySelector('word')
@@ -32,22 +80,53 @@ const results = computed(() => {
   })
 
   const input = userInput.value.toLocaleLowerCase().trim()
-  const inputSpread = [...input]
   if (!loading.value || !input) return {}
-  if (cache[input]) return cache[input]
+  // if (cache[input]) return cache[input]
 
   console.time('search ' + input)
   const { arr, obj } = fetchData
-  const dataWithLen = arr.filter(e => e.length === input.length)
-  const mid = arr.filter(e => e.includes(input))
-  const start = mid.filter(e => e.startsWith(input))
-  const end = mid.filter(e => e.endsWith(input))
+  // const include2 = helper[input[0]].filter(e => e.includes(input))
+  const include = arr.filter(e => e.includes(input))
+  // withTime(
+  //   () => {
+  //     const include2 = helper[input[0]].filter(e => e.includes(input))
+  //   },
+  //   () => {
+  //     const include = arr.filter(e => e.includes(input))
+  //   }
+  // )
+  const start = include.filter(e => e.startsWith(input))
+  const end = include.filter(e => e.endsWith(input))
+  const dataWithLen = withCache<string[]>(
+    () => arr.filter(e => e.length === input.length),
+    input.length
+  )
 
   // stroke
   // stoker
+  const inputSpread = [...input]
   const 顺序 = dataWithLen
     .filter(word => inputSpread.every(w => word.includes(w)))
-    .filter(word => [...word].sort() + '' === [...input].sort() + '')
+    .filter(word => [...word].sort() + '' === inputSpread.sort() + '')
+
+  // const newA = dataWithLen.map(e => ({ e, s: [...e].sort() + '' }))
+
+  // withTime(
+  //   () => {
+  //     console.log(111)
+
+  //     dataWithLen
+  //       // .filter(word => inputSpread.every(w => word.includes(w)))
+  //       .filter(word => [...word].sort() + '' === inputSpread.sort() + '')
+  //   },
+  //   () => {
+  //     console.log(222)
+
+  //     newA
+  //       // .filter(word => inputSpread.every(w => word.e.includes(w)))
+  //       .filter(word => word.s === sort)
+  //   }
+  // )
 
   // const __顺序2 = Array.from(
   //   Array(input.length - 1),
@@ -159,7 +238,7 @@ const results = computed(() => {
 
   const datas: any = (() => {
     const base = [
-      ...mid.filter(e => e === input),
+      ...include.filter(e => e === input),
       ...start.filter(e => e.length === input.length + 1),
       ...end.filter(e => e.length === input.length + 1),
     ]
@@ -172,7 +251,7 @@ const results = computed(() => {
       base,
       start,
       end,
-      mid,
+      mid: include,
       顺序,
       替换,
       多,
@@ -208,7 +287,7 @@ const results = computed(() => {
 
   return (cache[input] = {
     data: datas,
-    len: mid.length,
+    len: include.length,
     // len: Object.values(results.value).reduce(
     //   (all, now: any) => all + now.length,
     //   0
